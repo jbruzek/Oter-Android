@@ -1,8 +1,10 @@
 package com.joebruzek.oter.activities;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.adapters.ContactListAdapter;
 import com.joebruzek.oter.adapters.OterListAdapter;
+import com.joebruzek.oter.dialogs.SetTimeDialog;
 import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
 import com.joebruzek.oter.utilities.Strings;
@@ -25,7 +28,7 @@ import java.util.ArrayList;
 /**
  * Created by jbruzek on 11/15/15.
  */
-public class EditOterActivity extends ActionBarActivity {
+public class EditOterActivity extends AppCompatActivity implements SetTimeDialog.SetTimeDialogListener {
 
     private Oter oter;
     Toolbar toolbar;
@@ -111,7 +114,8 @@ public class EditOterActivity extends ActionBarActivity {
         timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Clicked time button", Toast.LENGTH_SHORT).show();
+                DialogFragment newFragment = new SetTimeDialog();
+                newFragment.show(getFragmentManager(), "setTime");
             }
         });
         locationButton.setOnClickListener(new View.OnClickListener() {
@@ -148,4 +152,14 @@ public class EditOterActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    public void onSetTimePositiveClick(SetTimeDialog l) {
+        Toast.makeText(this, "Time set was " + l.getTime(), Toast.LENGTH_SHORT).show();
+        l.dismiss();
+    }
+
+    @Override
+    public void onSetTimeNegativeClick(SetTimeDialog l) {
+        l.dismiss();
+    }
 }
