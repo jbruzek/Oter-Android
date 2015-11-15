@@ -68,8 +68,9 @@ public class OterDataLayer {
      * @return
      */
     public Cursor getAllOtersCursor(int limit) {
+        String orderBy = adapter.COLUMN_ID + " DESC";
         return database.query(adapter.TABLE_OTERS,
-                allColumns, null, null, null, null, adapter.COLUMN_ID + " DESC", String.valueOf(limit));
+                allColumns, null, null, null, null, orderBy, String.valueOf(limit));
     }
 
     /**
@@ -104,5 +105,37 @@ public class OterDataLayer {
         //TODO: Get all of the data from the cursor and add it to the oter
         //TODO: e.g. oter.setLocationName(cursor.getString(0));
         return oter;
+    }
+
+    /**
+     * Get a cursor for the database result of querying all active oters
+     *
+     * @return a cursor to the query result
+     */
+    public Cursor getActiveOtersCursor() {
+        String whereClause = "active = ?";
+        String[] whereArgs = new String[] {"true"};
+        String orderBy = adapter.COLUMN_ID + " DESC";
+        return database.query(adapter.TABLE_OTERS,
+                allColumns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+
+    /**
+     * get all of the oters that are "active"
+     */
+    public List<Oter> getActiveOters() {
+        List<Oter> oters = new ArrayList<Oter>();
+
+        Cursor cursor = getActiveOtersCursor();
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            oters.add(getOter(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        Log.d("DATABASE", "getActiveOters, size: " + oters.size());
+        return oters;
     }
 }
