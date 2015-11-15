@@ -2,10 +2,10 @@ package com.joebruzek.oter.activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.adapters.OterListAdapter;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * Main Activity. This is the "home screen" of the app
  * It displays a list of the current oters
  */
-public class OterListActivity extends ActionBarActivity {
+public class OterListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private OterListAdapter adapter;
@@ -30,7 +30,13 @@ public class OterListActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.oter_list_activity);
+        setContentView(R.layout.activity_oter_list);
+
+        Toolbar toolbar = (Toolbar)findViewById(R.id.oter_list_toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
+        }
 
         //test data
         ArrayList<Oter> testOters = new ArrayList<Oter>();
@@ -39,7 +45,7 @@ public class OterListActivity extends ActionBarActivity {
             Location l = new Location();
             l.setName(getResources().getString(R.string.test_title));
             o.setLocation(l);
-            o.setMessage(getResources().getString(R.string.test_text));
+            o.setMessage(getResources().getString(R.string.test_text) + " - " + i);
             o.setTime(15);
             testOters.add(o);
         }

@@ -1,6 +1,7 @@
 package com.joebruzek.oter.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joebruzek.oter.R;
+import com.joebruzek.oter.activities.EditOterActivity;
 import com.joebruzek.oter.models.Oter;
 import com.joebruzek.oter.utilities.Strings;
 
@@ -75,9 +77,9 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
          */
         @Override
         public void onClick(View v) {
-            Toast.makeText(context, "Clicked an Oter", Toast.LENGTH_SHORT).show();
-            //TODO: handle a click event
-            //TODO: open the EditOterActivity
+            Intent i = new Intent(context, EditOterActivity.class);
+            i.putExtra("oter", oter);
+            context.startActivity(i);
         }
     }
 

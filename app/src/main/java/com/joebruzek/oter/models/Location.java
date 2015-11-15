@@ -11,6 +11,8 @@ public class Location {
     private double latitude;
     private double longitude;
 
+    //TODO: make Location Parcelable
+
     /**
      * Default constructor
      */
