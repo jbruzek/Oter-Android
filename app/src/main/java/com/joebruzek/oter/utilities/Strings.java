@@ -22,9 +22,9 @@ public class Strings {
      * @param minutes The time (in minutes) away
      * @return formatted string, i.e. "15 minutes away"
      */
-    public static String buildTimeSetString(int minutes) {
-        //TODO: implement
-        return "";
+    public static String buildTimeString(int minutes) {
+        //TODO: implement better
+        return String.valueOf(minutes) + " minutes away";
     }
 
     /**
@@ -35,6 +35,6 @@ public class Strings {
      */
     public static String buildTimeString(int minutes, String location) {
         //TODO: implement
-        return "";
+        return String.valueOf(minutes) + " minutes away from " + location;
     }
 }

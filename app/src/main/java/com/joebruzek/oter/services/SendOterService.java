@@ -65,7 +65,9 @@ public class SendOterService extends Service {
          */
         @Override
         public void processResults(JSONObject result) {
-
+            //TODO: check to see if the location is close enough to send
+            //TODO: if it is, send the text to the oter(s)
+            //TODO: else send a waitingTask
         }
 
         /**

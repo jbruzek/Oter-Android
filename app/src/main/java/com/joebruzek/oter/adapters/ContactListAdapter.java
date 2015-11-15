@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,15 +19,15 @@ import java.util.List;
 /**
  * Adapter for the Oter List recyclerView.
  *
- * Created by jbruzek on 11/13/15.
+ * Created by jbruzek on 11/14/15.
  */
-public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHolder> {
+public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ViewHolder> {
 
     private List<Oter> dataList;
     private Context context;
     private boolean empty = false;
 
-    public OterListAdapter(Context c, List<Oter> list) {
+    public ContactListAdapter(Context c, List<Oter> list) {
         context = c;
 
         //deep copy

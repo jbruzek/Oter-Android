@@ -3,4 +3,12 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="no_oters_title">No Oters Scheduled</string>
+    <string name="no_oters_subtitle">Tap the + to create an Oter</string>
+
+
+    <string name="test_title">Mom\'s House</string>
+    <string name="test_text">\"I\'ll be there soon!\"</string>
+    <string name="test_time">15 minutes away</string>
 </resources>
