@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Oter</string>
+    <string name="activity_new_oter_name">New Oter</string>
+    <string name="activity_edit_oter_name">Edit Oter</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -7,6 +9,9 @@
     <string name="no_oters_title">No Oters Scheduled</string>
     <string name="no_oters_subtitle">Tap the + to create an Oter</string>
 
+    <string name="text_message_hint">Type your message here</string>
+    <string name="schedule_oter">Schedule</string>
+    <string name="save_oter">Save</string>
 
     <string name="test_title">Mom\'s House</string>
     <string name="test_text">\"I\'ll be there soon!\"</string>

@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
     <android.support.v7.widget.Toolbar
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,5 +18,96 @@
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         android:elevation="4dp">
     </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="6dp"
+        card_view:cardCornerRadius="4dp"
+        card_view:elevation="4dp">
+
+        <EditText
+            android:id="@+id/edit_oter_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textMultiLine"
+            android:gravity="top|left"
+            android:textColor="@android:color/black"
+            android:hint="@string/text_message_hint"
+            android:textColorHint="@android:color/secondary_text_dark"/>
+
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/edit_oter_time_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_time"/>
+
+        <ImageButton
+            android:id="@+id/edit_oter_location_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_location"/>
+
+        <ImageButton
+            android:id="@+id/edit_oter_contact_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_contact"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/edit_oter_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:padding="8dp"
+        android:textSize="14dp"
+        android:gravity="center"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/edit_oter_contacts_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right">
+
+        <Button
+            android:id="@+id/edit_oter_schedule_button"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:background="@android:color/white"
+            android:textColor="@color/primary"
+            android:text="@string/schedule_oter"/>
+
+
+    </RelativeLayout>
 
 </LinearLayout>

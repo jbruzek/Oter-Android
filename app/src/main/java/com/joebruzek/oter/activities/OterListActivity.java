@@ -1,11 +1,14 @@
 package com.joebruzek.oter.activities;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.adapters.OterListAdapter;
@@ -20,8 +23,10 @@ import java.util.ArrayList;
  */
 public class OterListActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
     private RecyclerView recyclerView;
     private OterListAdapter adapter;
+    private FloatingActionButton fab;
 
     /**
      * Create the activity
@@ -32,7 +37,8 @@ public class OterListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_oter_list);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.oter_list_toolbar);
+        findScreenElements();
+
         if (toolbar != null) {
             toolbar.setTitle(R.string.app_name);
             setSupportActionBar(toolbar);
@@ -54,10 +60,31 @@ public class OterListActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        //false because there will always be default locations
         adapter = new OterListAdapter(this, testOters);
         recyclerView.setAdapter(adapter);
     }
 
-    //TODO: everything
+
+    /**
+     * Find all the screen elements and assign them to local fields
+     */
+    private void findScreenElements() {
+        toolbar = (Toolbar)findViewById(R.id.oter_list_toolbar);
+        recyclerView = (RecyclerView)findViewById(R.id.edit_oter_contacts_recycler_view);
+        fab = (FloatingActionButton) findViewById(R.id.oter_list_fab);
+
+        setClickListeners();
+    }
+
+    /**
+     * set click listeners for screen elements
+     */
+    private void setClickListeners() {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getBaseContext(), EditOterActivity.class));
+            }
+        });
+    }
 }
