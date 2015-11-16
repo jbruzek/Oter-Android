@@ -115,6 +115,13 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             //holder.location.setText(dataList.get(position).getLocation().getName());
             holder.text.setText(dataList.get(position).getMessage());
             holder.time.setText(Strings.buildTimeString(dataList.get(position).getTime(), dataList.get(position).getLocation().getName()));
+
+            if (position == 0) {
+                //TODO: add 6dp to the top padding
+            }
+            else if (position == dataList.size() - 1) {
+                //TODO: add 6dp to the bottom padding
+            }
         }
     }
 
