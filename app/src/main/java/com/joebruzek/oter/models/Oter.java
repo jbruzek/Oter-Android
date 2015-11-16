@@ -27,13 +27,13 @@ public class Oter implements Parcelable {
     /**
      * Write the values of the Oter to a parcel
      * @param parcel
-     * @param i
+     * @param flags
      */
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
+    public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(message);
         parcel.writeInt(time);
-        //TODO: Make Location parcelable and put it here
+        parcel.writeParcelable(location, flags);
     }
 
     /**
@@ -63,6 +63,7 @@ public class Oter implements Parcelable {
     public Oter(Parcel p) {
         message = p.readString();
         time = p.readInt();
+        location = (Location)p.readParcelable(Location.class.getClassLoader());
     }
 
     /**
