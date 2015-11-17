@@ -37,4 +37,21 @@ public class Strings {
         //TODO: implement
         return String.valueOf(minutes) + " minutes away from " + location;
     }
+
+    /**
+     * get the initials from a name, in upper case
+     *
+     * @param name "Joe Bruzek"
+     * @return "JB"
+     */
+    public static String getInitials(String name) {
+        if (name == null || name.equals("")) {
+            return "";
+        }
+        String[] tokens = name.split(" ");
+        if (tokens.length == 1) {
+            return String.valueOf(tokens[0].charAt(0)).toUpperCase();
+        }
+        return String.valueOf(tokens[0].charAt(0)).toUpperCase() + String.valueOf(tokens[tokens.length - 1].charAt(0)).toUpperCase();
+    }
 }
