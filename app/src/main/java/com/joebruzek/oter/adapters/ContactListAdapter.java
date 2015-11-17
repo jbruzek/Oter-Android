@@ -26,7 +26,16 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     private List<String> dataList;
     private Context context;
     private boolean editable = false;
+    private int limit;
+    private int rollover = 0;
+    private boolean hitLimit = false;
 
+    /**
+     * constructor that takes an editable flag
+     * @param c
+     * @param list
+     * @param editable if true, the elements have an x that can be used to delete elements from the list
+     */
     public ContactListAdapter(Context c, List<String> list, boolean editable) {
         context = c;
         this.editable = editable;
@@ -34,6 +43,22 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         //deep copy
         dataList = new ArrayList<String>();
         dataList.addAll(list);
+
+        //default limit. This might not be needed, since we have the hitLimit flag.
+        limit = 4;
+    }
+
+    /**
+     * constructor that takes a limit. By default if the list has a limit it is not editable
+     * @param c
+     * @param list
+     * @param limit how many contacts to display before appending a "and x other people" item
+     */
+    public ContactListAdapter(Context c, List<String> list, int limit) {
+        this(c, list, false);
+
+        this.limit = limit;
+        formatDataSetToLimit();
     }
 
     /**
@@ -88,7 +113,11 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.name.setText(dataList.get(position));
+        if (position == dataList.size() - 1 && hitLimit) {
+            holder.name.setText("and " + rollover + " other people");
+        } else {
+            holder.name.setText(dataList.get(position));
+        }
         holder.icon.setContactName(dataList.get(position));
 
         //only show the x button if this list is editable
@@ -104,5 +133,19 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     @Override
     public int getItemCount() {
         return dataList.size();
+    }
+
+    private void formatDataSetToLimit() {
+        if (dataList.size() <= limit) {
+            return;
+        }
+        hitLimit = true;
+        ArrayList<String> temp = new ArrayList<String>();
+        for (int i = 0; i < limit; i++) {
+            temp.add(dataList.get(i));
+        }
+        rollover = dataList.size() - limit;
+        temp.add("+ " + rollover);
+        dataList = temp;
     }
 }

@@ -121,8 +121,11 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             holder.text.setText(dataList.get(position).getMessage());
             holder.time.setText(Strings.buildTimeString(dataList.get(position).getTime()));
 
+            int limit = 2;
+
             //set the height of the contact list
-            holder.contactsList.getLayoutParams().height = Measurements.dpToPixel(context, (56 * dataList.get(position).getContacts().size()));
+            int height = Math.min(dataList.get(position).getContacts().size(), limit + 1);
+            holder.contactsList.getLayoutParams().height = Measurements.dpToPixel(context, (56 * height));
             holder.contactsList.requestLayout();
 
             //TODO: Remove touch events for the contacts list.
@@ -130,7 +133,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             LinearLayoutManager layoutManager = new LinearLayoutManager(context);
             holder.contactsList.setLayoutManager(layoutManager);
             holder.contactsList.setHasFixedSize(true);
-            holder.contactsList.setAdapter(new ContactListAdapter(context, dataList.get(position).getContacts(), false));
+            holder.contactsList.setAdapter(new ContactListAdapter(context, dataList.get(position).getContacts(), limit));
 
             if (position == 0) {
                 //TODO: add 6dp to the top padding

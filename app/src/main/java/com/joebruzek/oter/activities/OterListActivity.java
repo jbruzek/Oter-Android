@@ -62,6 +62,9 @@ public class OterListActivity extends AppCompatActivity {
             contacts.add("Yash Pant");
             contacts.add("Mark Olsen");
             contacts.add("Alexia Lutz");
+            for (int j = 0; j < i; j++) {
+                contacts.add("your mom");
+            }
             o.setContacts(contacts);
             o.setMessage("\"" + messages[i] + "\"");
             o.setTime(15);
