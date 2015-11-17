@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.views.ContactIcon;
@@ -55,6 +56,13 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             name = (TextView) itemView.findViewById(R.id.contact_list_item_name);
             icon = (ContactIcon) itemView.findViewById(R.id.contact_list_item_icon);
             delete = (ImageButton) itemView.findViewById(R.id.contact_list_item_button);
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context, "Delete " + name.getText().toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 

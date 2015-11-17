@@ -55,9 +55,6 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         Bundle b = getIntent().getExtras();
         if (b != null) {
             oter = (Oter) b.getParcelable("oter");
-            Toast.makeText(this, "Location name: " + oter.getLocation().getName()
-                    + "\nLocation long: " + oter.getLocation().getLongitude()
-                    + "\nLocation lati: " + oter.getLocation().getLatitude(), Toast.LENGTH_SHORT).show();
         }
 
         //Get the references to all the buttons and stuff
@@ -151,18 +148,20 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
             toolbar.setTitle(getResources().getString(R.string.activity_edit_oter_name));
             editMessage.setText(oter.getMessage());
 
-            //test location
-            timeText.setText(Strings.buildTimeString(oter.getTime(), "Mom's House"));
-            //end test location
+            setTimeText();
 
-            //timeText.setText(Strings.buildTimeString(oter.getTime(), oter.getLocation().getName()));
             scheduleButton.setText(getResources().getString(R.string.save_oter));
         }
     }
 
+    private void setTimeText() {
+        timeText.setText(Strings.buildTimeString(oter.getTime(), oter.getLocation().getName()));
+    }
+
     @Override
     public void onSetTimePositiveClick(SetTimeDialog l) {
-        Toast.makeText(this, "Time set was " + l.getTime(), Toast.LENGTH_SHORT).show();
+        oter.setTime(l.getTime());
+        setTimeText();
         l.dismiss();
     }
 

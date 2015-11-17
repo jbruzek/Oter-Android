@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.activities.EditOterActivity;
 import com.joebruzek.oter.models.Oter;
+import com.joebruzek.oter.utilities.Measurements;
 import com.joebruzek.oter.utilities.Strings;
 
 import java.util.ArrayList;
@@ -67,7 +69,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
                 itemView.setClickable(true);
                 itemView.setOnClickListener(this);
 
-                //location = (TextView) itemView.findViewById(R.id.oter_item_title);
+                location = (TextView) itemView.findViewById(R.id.oter_item_title);
                 text = (TextView) itemView.findViewById(R.id.oter_item_text);
                 time = (TextView) itemView.findViewById(R.id.oter_item_time);
                 contactsList = (RecyclerView) itemView.findViewById(R.id.oter_item_contact_list);
@@ -115,18 +117,20 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (!empty) {
             holder.oter = dataList.get(position);
-            //holder.location.setText(dataList.get(position).getLocation().getName());
+            holder.location.setText(dataList.get(position).getLocation().getName());
             holder.text.setText(dataList.get(position).getMessage());
-            holder.time.setText(Strings.buildTimeString(dataList.get(position).getTime(), dataList.get(position).getLocation().getName()));
+            holder.time.setText(Strings.buildTimeString(dataList.get(position).getTime()));
+
+            //set the height of the contact list
+            holder.contactsList.getLayoutParams().height = Measurements.dpToPixel(context, (56 * dataList.get(position).getContacts().size()));
+            holder.contactsList.requestLayout();
+
+            //TODO: Remove touch events for the contacts list.
+
             LinearLayoutManager layoutManager = new LinearLayoutManager(context);
             holder.contactsList.setLayoutManager(layoutManager);
             holder.contactsList.setHasFixedSize(true);
-            ArrayList<String> contacts = new ArrayList<String>();
-            contacts.add("Joe Bruzek");
-            contacts.add("Yash Pant");
-            contacts.add("Mark Olsen");
-            contacts.add("Alexia Lutz");
-            holder.contactsList.setAdapter(new ContactListAdapter(context, contacts, false));
+            holder.contactsList.setAdapter(new ContactListAdapter(context, dataList.get(position).getContacts(), false));
 
             if (position == 0) {
                 //TODO: add 6dp to the top padding

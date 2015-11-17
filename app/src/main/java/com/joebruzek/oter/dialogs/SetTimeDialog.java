@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 
 import com.joebruzek.oter.R;
+import com.joebruzek.oter.views.ContactIcon;
 
 /**
  * Dialog for adding a time to an oter

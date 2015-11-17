@@ -4,6 +4,8 @@ package com.joebruzek.oter.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 /**
  * Data model for an oter.
  *
@@ -14,6 +16,16 @@ public class Oter implements Parcelable {
     private String message;
     private int time;
     private Location location;
+
+    public ArrayList<String> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(ArrayList<String> contacts) {
+        this.contacts = contacts;
+    }
+
+    private ArrayList<String> contacts;
 
     /**
      * Describe the contents of the parcel

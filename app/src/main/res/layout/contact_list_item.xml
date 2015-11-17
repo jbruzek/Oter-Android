@@ -4,7 +4,7 @@
     xmlns:contact="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="56dp">
 
     <com.joebruzek.oter.views.ContactIcon
         android:id="@+id/contact_list_item_icon"

@@ -48,14 +48,22 @@ public class OterListActivity extends AppCompatActivity {
 
         //test data
         ArrayList<Oter> testOters = new ArrayList<Oter>();
+        String[] messages = {"I'll be there soon!", "Almost home.", "15 minutes out", "see you soon", "lol omg lmfao"};
+        String[] locations = {"Mom's House", "Surge", "Florida", "The moon", "Mr. Choo's"};
         for (int i = 0; i < 5; i++) {
             Oter o = new Oter();
             Location l = new Location();
-            l.setName(getResources().getString(R.string.test_title));
+            l.setName(locations[i]);
             l.setLatitude(i + 0.123);
             l.setLongitude(i + 0.456);
             o.setLocation(l);
-            o.setMessage(getResources().getString(R.string.test_text) + " - " + i);
+            ArrayList<String> contacts = new ArrayList<String>();
+            contacts.add("Joe Bruzek");
+            contacts.add("Yash Pant");
+            contacts.add("Mark Olsen");
+            contacts.add("Alexia Lutz");
+            o.setContacts(contacts);
+            o.setMessage("\"" + messages[i] + "\"");
             o.setTime(15);
             testOters.add(o);
         }
