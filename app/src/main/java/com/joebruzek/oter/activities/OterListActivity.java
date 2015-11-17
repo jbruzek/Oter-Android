@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.joebruzek.oter.R;
+import com.joebruzek.oter.adapters.ContactListAdapter;
+import com.joebruzek.oter.adapters.CustomLinearLayoutManager;
 import com.joebruzek.oter.adapters.OterListAdapter;
 import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
@@ -50,6 +52,8 @@ public class OterListActivity extends AppCompatActivity {
             Oter o = new Oter();
             Location l = new Location();
             l.setName(getResources().getString(R.string.test_title));
+            l.setLatitude(i + 0.123);
+            l.setLongitude(i + 0.456);
             o.setLocation(l);
             o.setMessage(getResources().getString(R.string.test_text) + " - " + i);
             o.setTime(15);
@@ -58,6 +62,7 @@ public class OterListActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView)findViewById(R.id.oter_list_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        //CustomLinearLayoutManager tries to solve sizing issues
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         adapter = new OterListAdapter(this, testOters);

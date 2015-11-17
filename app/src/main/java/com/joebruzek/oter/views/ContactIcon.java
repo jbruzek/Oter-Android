@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.joebruzek.oter.R;
+import com.joebruzek.oter.utilities.Measurements;
 import com.joebruzek.oter.utilities.Strings;
 
 /**
@@ -19,6 +20,8 @@ import com.joebruzek.oter.utilities.Strings;
 public class ContactIcon extends View {
 
     private Paint paintStyle;
+
+    private final int preferredSize = 40;
 
     private String contactName;
     private String initials;
@@ -86,13 +89,13 @@ public class ContactIcon extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        //TODO: find a better default size than a constant. Something density dependant, like 24dp
+        int pixelSize = Measurements.dpToPixel(getContext(), preferredSize);
 
         //Get the width measurement
-        int widthSize = View.resolveSize(150, widthMeasureSpec);
+        int widthSize = View.resolveSize(pixelSize, widthMeasureSpec);
 
         //Get the height measurement
-        int heightSize = View.resolveSize(150, heightMeasureSpec);
+        int heightSize = View.resolveSize(pixelSize, heightMeasureSpec);
 
         //MUST call this to store the measurements
         setMeasuredDimension(widthSize, heightSize);
@@ -118,4 +121,11 @@ public class ContactIcon extends View {
         invalidate();
         requestLayout();
     }
+
+    /*
+    Get the contact photo and display it
+
+    http://developer.android.com/reference/android/provider/ContactsContract.Contacts.Photo.html
+    http://developer.android.com/reference/android/graphics/BitmapFactory.html
+     */
 }

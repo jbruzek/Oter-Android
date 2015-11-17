@@ -55,6 +55,9 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         Bundle b = getIntent().getExtras();
         if (b != null) {
             oter = (Oter) b.getParcelable("oter");
+            Toast.makeText(this, "Location name: " + oter.getLocation().getName()
+                    + "\nLocation long: " + oter.getLocation().getLongitude()
+                    + "\nLocation lati: " + oter.getLocation().getLatitude(), Toast.LENGTH_SHORT).show();
         }
 
         //Get the references to all the buttons and stuff
@@ -72,7 +75,12 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        ContactListAdapter adapter = new ContactListAdapter(this, new ArrayList<Oter>());
+        ArrayList<String> contacts = new ArrayList<String>();
+        contacts.add("Joe Bruzek");
+        contacts.add("Yash Pant");
+        contacts.add("Mark Olsen");
+        contacts.add("Alexia Lutz");
+        ContactListAdapter adapter = new ContactListAdapter(this, contacts, true);
         recyclerView.setAdapter(adapter);
     }
 

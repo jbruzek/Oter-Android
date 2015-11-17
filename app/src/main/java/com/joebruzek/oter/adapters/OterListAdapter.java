@@ -2,6 +2,7 @@ package com.joebruzek.oter.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,6 +53,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
         TextView location;
         TextView text;
         TextView time;
+        RecyclerView contactsList;
 
         /**
          * Create the viewholder for the item
@@ -68,6 +70,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
                 //location = (TextView) itemView.findViewById(R.id.oter_item_title);
                 text = (TextView) itemView.findViewById(R.id.oter_item_text);
                 time = (TextView) itemView.findViewById(R.id.oter_item_time);
+                contactsList = (RecyclerView) itemView.findViewById(R.id.oter_item_contact_list);
             }
         }
 
@@ -115,6 +118,15 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             //holder.location.setText(dataList.get(position).getLocation().getName());
             holder.text.setText(dataList.get(position).getMessage());
             holder.time.setText(Strings.buildTimeString(dataList.get(position).getTime(), dataList.get(position).getLocation().getName()));
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+            holder.contactsList.setLayoutManager(layoutManager);
+            holder.contactsList.setHasFixedSize(true);
+            ArrayList<String> contacts = new ArrayList<String>();
+            contacts.add("Joe Bruzek");
+            contacts.add("Yash Pant");
+            contacts.add("Mark Olsen");
+            contacts.add("Alexia Lutz");
+            holder.contactsList.setAdapter(new ContactListAdapter(context, contacts, false));
 
             if (position == 0) {
                 //TODO: add 6dp to the top padding
