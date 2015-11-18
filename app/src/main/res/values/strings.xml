@@ -8,6 +8,9 @@
     <string name="dialog_set_time_sub2">minutes</string>
     <string name="dialog_set_time_sub3">away from my destination</string>
 
+    <string name="dialog_add_location_title">Set Location</string>
+    <string name="dialog_add_location_hint">Search</string>
+
     <string name="no_oters_title">No Oters Scheduled</string>
     <string name="no_oters_subtitle">Tap the + to create an Oter</string>
 

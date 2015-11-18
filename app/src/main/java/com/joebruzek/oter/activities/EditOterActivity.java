@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.adapters.ContactListAdapter;
 import com.joebruzek.oter.adapters.OterListAdapter;
+import com.joebruzek.oter.dialogs.AddLocationDialog;
 import com.joebruzek.oter.dialogs.SetTimeDialog;
 import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Created by jbruzek on 11/15/15.
  */
-public class EditOterActivity extends AppCompatActivity implements SetTimeDialog.SetTimeDialogListener {
+public class EditOterActivity extends AppCompatActivity implements SetTimeDialog.SetTimeDialogListener, AddLocationDialog.AddLocationDialogListener {
 
     private Oter oter;
     Toolbar toolbar;
@@ -126,7 +127,8 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Clicked location button", Toast.LENGTH_SHORT).show();
+                DialogFragment newFragment = new AddLocationDialog();
+                newFragment.show(getFragmentManager(), "addLocation");
             }
         });
         contactButton.setOnClickListener(new View.OnClickListener() {
@@ -167,6 +169,16 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
 
     @Override
     public void onSetTimeNegativeClick(SetTimeDialog l) {
+        l.dismiss();
+    }
+
+    @Override
+    public void onAddLocationPositiveClick(AddLocationDialog l) {
+
+    }
+
+    @Override
+    public void onAddLocationNegativeClick(AddLocationDialog l) {
         l.dismiss();
     }
 }

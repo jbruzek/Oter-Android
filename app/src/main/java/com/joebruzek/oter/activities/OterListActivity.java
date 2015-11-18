@@ -73,7 +73,6 @@ public class OterListActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView)findViewById(R.id.oter_list_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        //CustomLinearLayoutManager tries to solve sizing issues
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         adapter = new OterListAdapter(this, testOters);
