@@ -11,6 +11,7 @@ import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,6 +48,52 @@ public class OterDataLayer {
      */
     public void closeDB() {
         adapter.close();
+    }
+
+    /**
+     * Utility to compare two cursors
+     * @param c1
+     * @param c2
+     * @return if the cursors point to data that is the same
+     */
+    public static boolean cursorsEqual(Cursor c1, Cursor c2) {
+        String[] columns = c1.getColumnNames();
+        //check to see if the column names are equal
+        if (!Arrays.equals(columns, c2.getColumnNames())) {
+            return false;
+        }
+
+        //check the values of each column
+        for (int i = 0; i < columns.length; i++) {
+            if (c1.getType(i) != c2.getType(i)) {
+                return false;
+            }
+            switch (c1.getType(i)) {
+                case Cursor.FIELD_TYPE_STRING:
+                    if (!c1.getString(i).equals(c2.getString(i))) {
+                        return false;
+                    }
+                    break;
+                case Cursor.FIELD_TYPE_FLOAT:
+                    if (c1.getFloat(i) != c2.getFloat(i)) {
+                        return false;
+                    }
+                    break;
+                case Cursor.FIELD_TYPE_INTEGER:
+                    if (c1.getInt(i) != c2.getInt(i)) {
+                        return false;
+                    }
+                    break;
+                case Cursor.FIELD_TYPE_BLOB:
+                    if (!Arrays.equals(c1.getBlob(i), c2.getBlob(i))) {
+                        return false;
+                    }
+                    break;
+                default:
+            }
+        }
+        //they truly are the same
+        return true;
     }
 
     /**
