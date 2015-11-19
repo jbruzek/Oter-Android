@@ -157,6 +157,71 @@ public class OterDataLayer {
     }
 
     /**
+     * Insert a location if it doesn't already exist in the database.
+     * @param l
+     * @return the id of the location
+     */
+    public long insertLocationIfNotExists(Location l) {
+        Location l2 = getLocationIfExists(l);
+        if (l2 == null) {
+            return insertLocation(l);
+        } else {
+            return l.getId();
+        }
+    }
+
+    /**
+     * Delete an Oter from the database
+     * @param oter
+     * @return how many rows were deleted. Should only be on, since we're deleting a specific oter
+     */
+    public int removeOter(Oter oter) {
+        return removeOter(oter.getId());
+    }
+
+    /**
+     * Delete an oter from the database using the id of the oter
+     * @param id
+     * @return how many rows were deleted. Should only be one, since we're deleting a specific oter
+     */
+    public int removeOter(long id) {
+        String whereClause = DatabaseContract.OtersContract.KEY_ID + " = ?";
+        String[] whereArgs = {String.valueOf(id)};
+        int value = database.delete(DatabaseContract.OtersContract.TABLE_NAME,
+                whereClause,
+                whereArgs);
+        listener.onItemDeleted(DatabaseContract.OtersContract.TABLE_NAME, id);
+        return value;
+    }
+
+    /**
+     * Update an oter in the database with the information of this oter.
+     * @param oter
+     * @return the number of affected rows, should be one, since we're querying by id
+     */
+    public int updateOter(Oter oter) {
+        //check to see if the new location exists in the database
+        long locationId = insertLocationIfNotExists(oter.getLocation());
+
+        ContentValues values = new ContentValues();
+        values.put(DatabaseContract.OtersContract.KEY_MESSAGE, oter.getMessage());
+        values.put(DatabaseContract.OtersContract.KEY_LOCATION, locationId);
+        values.put(DatabaseContract.OtersContract.KEY_TIME, oter.getTime());
+
+        String selection = DatabaseContract.OtersContract.KEY_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(oter.getId())};
+
+        int count = database.update(DatabaseContract.OtersContract.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+
+        //update the listeners
+        listener.onItemUpdated(DatabaseContract.OtersContract.TABLE_NAME, oter.getId());
+        return count;
+    }
+
+    /**
      * Get a cursor for the database result of querying all oters
      *
      * @param limit the limit for how many oters you want to receive
@@ -232,6 +297,7 @@ public class OterDataLayer {
             return null;
         }
         if (cursor.moveToFirst()) {
+            //TODO: Should this just return the parameter?
             Location loc = buildLocation(cursor);
             cursor.close();
             return loc;
