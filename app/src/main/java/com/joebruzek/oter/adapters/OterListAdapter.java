@@ -29,6 +29,9 @@ import java.util.List;
  */
 public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHolder> {
 
+    //TODO: Change the adapter to work with a cursor, like this:
+    //https://gist.github.com/skyfishjy/443b7448f59be978bc59
+
     private List<Oter> dataList;
     private Context context;
     private boolean empty = false;

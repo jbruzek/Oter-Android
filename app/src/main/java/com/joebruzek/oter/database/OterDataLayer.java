@@ -23,6 +23,7 @@ public class OterDataLayer {
 
     private SQLiteDatabase database;
     private DatabaseAdapter adapter;
+    private DatabaseListenerComposite listener;
 
     /**
      * Constructor. Initialize the DatabaseAdapter.
@@ -31,6 +32,7 @@ public class OterDataLayer {
      */
     public OterDataLayer(Context context) {
         adapter = DatabaseAdapter.getInstance(context);
+        listener = DatabaseListenerComposite.getInstance();
     }
 
     /**
@@ -71,11 +73,16 @@ public class OterDataLayer {
         values.put(DatabaseContract.OtersContract.KEY_MESSAGE, oter.getMessage());
         values.put(DatabaseContract.OtersContract.KEY_LOCATION, locationId);
         oter.setId(database.insert(DatabaseContract.OtersContract.TABLE_NAME, null, values));
+
+        //notify the listeners
+        listener.onItemInserted(DatabaseContract.OtersContract.TABLE_NAME, oter.getId());
         return oter.getId();
     }
 
     /**
      * insert a Location into the database
+     *
+     * Also set the id of the location set as a parameter to the primary key of the Location in the db
      *
      * @param l the location
      * @return the location primary key
@@ -85,7 +92,11 @@ public class OterDataLayer {
         values.put(DatabaseContract.LocationsContract.KEY_NAME, l.getName());
         values.put(DatabaseContract.LocationsContract.KEY_LONGITUDE, l.getLongitude());
         values.put(DatabaseContract.LocationsContract.KEY_LATITUDE, l.getLatitude());
-        return database.insert(DatabaseContract.LocationsContract.TABLE_NAME, null, values);
+        l.setId(database.insert(DatabaseContract.LocationsContract.TABLE_NAME, null, values));
+
+        //notify the listeners
+        listener.onItemInserted(DatabaseContract.LocationsContract.TABLE_NAME, l.getId());
+        return l.getId();
     }
 
     /**
