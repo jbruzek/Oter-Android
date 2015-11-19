@@ -10,13 +10,13 @@ import android.util.Log;
  *
  * Created by jbruzek on 11/13/15.
  */
-public class DataBaseAdapter extends SQLiteOpenHelper {
+public class DatabaseAdapter extends SQLiteOpenHelper {
 
     /**
      * Constructor
      * @param context
      */
-    public DataBaseAdapter(Context context) {
+    public DatabaseAdapter(Context context) {
         super(context, DatabaseContract.DATABASE_NAME, null, DatabaseContract.DATABASE_VERSION);
     }
 
@@ -39,7 +39,7 @@ public class DataBaseAdapter extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        Log.w(DataBaseAdapter.class.getName(),
+        Log.w(DatabaseAdapter.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
 
