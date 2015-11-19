@@ -16,6 +16,7 @@ public class Oter implements Parcelable {
     private String message;
     private int time;
     private Location location;
+    private long id;
 
     public ArrayList<String> getContacts() {
         return contacts;
@@ -46,6 +47,7 @@ public class Oter implements Parcelable {
         parcel.writeString(message);
         parcel.writeInt(time);
         parcel.writeParcelable(location, flags);
+        parcel.writeLong(id);
     }
 
     /**
@@ -76,11 +78,19 @@ public class Oter implements Parcelable {
         message = p.readString();
         time = p.readInt();
         location = (Location)p.readParcelable(Location.class.getClassLoader());
+        id = p.readLong();
     }
 
     /**
      * Getters and setters
      */
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public Location getLocation() {
         return location;

@@ -57,7 +57,7 @@ public final class DatabaseContract {
                 KEY_MESSAGE + TEXT_TYPE + COMMA_SEP +
                 KEY_TIME + INTEGER_TYPE + COMMA_SEP +
                 KEY_LOCATION + INTEGER_TYPE + COMMA_SEP +
-                "FOREIGNKEY (" + KEY_LOCATION + ") REFERENCES " +
+                "FOREIGN KEY (" + KEY_LOCATION + ") REFERENCES " +
                 LocationsContract.TABLE_NAME + "(" + LocationsContract.KEY_ID + ")" +
                 " )";
 
@@ -90,10 +90,17 @@ public final class DatabaseContract {
                 KEY_ID + " INTEGER PRIMARY KEY," +
                 KEY_NAME + TEXT_TYPE + COMMA_SEP +
                 KEY_LATITUDE + REAL_TYPE + COMMA_SEP +
-                KEY_LONGITUDE + REAL_TYPE + COMMA_SEP +
+                KEY_LONGITUDE + REAL_TYPE +
                 " )";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+        public static final String[] ALL_COLUMNS = {
+                KEY_ID,
+                KEY_NAME,
+                KEY_LONGITUDE,
+                KEY_LATITUDE
+        };
     }
 
     /**
@@ -119,7 +126,7 @@ public final class DatabaseContract {
                 KEY_ID + " INTEGER PRIMARY KEY," +
                 KEY_OTER + INTEGER_TYPE + COMMA_SEP +
                 KEY_CONTACT + TEXT_TYPE + COMMA_SEP +
-                "FOREIGNKEY (" + KEY_OTER + ") REFERENCES " +
+                "FOREIGN KEY (" + KEY_OTER + ") REFERENCES " +
                 OtersContract.TABLE_NAME + "(" + OtersContract.KEY_ID + ")" +
                 " )";
 

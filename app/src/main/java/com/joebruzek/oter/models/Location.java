@@ -13,6 +13,7 @@ public class Location implements Parcelable {
     private String name;
     private double latitude;
     private double longitude;
+    private long id;
 
     /**
      * Needed for Parcelable
@@ -33,6 +34,7 @@ public class Location implements Parcelable {
         parcel.writeString(name);
         double[] coordinates = new double[]{longitude, latitude};
         parcel.writeDoubleArray(coordinates);
+        parcel.writeLong(id);
     }
 
     /**
@@ -65,11 +67,19 @@ public class Location implements Parcelable {
         p.readDoubleArray(coordinates);
         longitude = coordinates[0];
         latitude = coordinates[1];
+        id = p.readLong();
     }
 
     /**
      * Getters and setters
      */
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public double getLongitude() {
         return longitude;

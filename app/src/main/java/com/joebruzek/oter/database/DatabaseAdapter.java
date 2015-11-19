@@ -12,6 +12,15 @@ import android.util.Log;
  */
 public class DatabaseAdapter extends SQLiteOpenHelper {
 
+    private static DatabaseAdapter instance;
+
+    public static DatabaseAdapter getInstance(Context context) {
+        if (instance == null) {
+            instance = new DatabaseAdapter(context.getApplicationContext());
+        }
+        return instance;
+    }
+
     /**
      * Constructor
      * @param context

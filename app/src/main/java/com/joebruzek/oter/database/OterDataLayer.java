@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
 
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import java.util.List;
 public class OterDataLayer {
 
     private SQLiteDatabase database;
-    private DataBaseAdapter adapter;
+    private DatabaseAdapter adapter;
 
     /**
      * Constructor. Initialize the DatabaseAdapter.
@@ -28,7 +30,7 @@ public class OterDataLayer {
      * @param context
      */
     public OterDataLayer(Context context) {
-        adapter = new DataBaseAdapter(context);
+        adapter = DatabaseAdapter.getInstance(context);
     }
 
     /**
@@ -47,14 +49,43 @@ public class OterDataLayer {
 
     /**
      * insert a oter into the database
+     * First we need to insert a location so we have the foreign key reference
+     *
+     * Also set the id of the oter passes as parameter to the primaryKey of the Oter in the db
      *
      * @param oter
+     * @return the oter primary key
      */
-    public void insertOter(Oter oter) {
+    public long insertOter(Oter oter) {
+        //Check to see if the location is already in the database
+        Location l = getLocationIfExists(oter.getLocation());
+        long locationId;
+        if (l == null) {
+            locationId = insertLocation(oter.getLocation());
+        } else {
+            locationId = l.getId();
+        }
+
+        //insert the oter into the database
         ContentValues values = new ContentValues();
-        //TODO: Add the values from the Oter to the contentValues
-        //TODO: i.e. values.put(adapter.COLUMN_TIME, oter.getTime());
-        database.insert(DatabaseContract.OtersContract.TABLE_NAME, null, values);
+        values.put(DatabaseContract.OtersContract.KEY_MESSAGE, oter.getMessage());
+        values.put(DatabaseContract.OtersContract.KEY_LOCATION, locationId);
+        oter.setId(database.insert(DatabaseContract.OtersContract.TABLE_NAME, null, values));
+        return oter.getId();
+    }
+
+    /**
+     * insert a Location into the database
+     *
+     * @param l the location
+     * @return the location primary key
+     */
+    public long insertLocation(Location l) {
+        ContentValues values = new ContentValues();
+        values.put(DatabaseContract.LocationsContract.KEY_NAME, l.getName());
+        values.put(DatabaseContract.LocationsContract.KEY_LONGITUDE, l.getLongitude());
+        values.put(DatabaseContract.LocationsContract.KEY_LATITUDE, l.getLatitude());
+        return database.insert(DatabaseContract.LocationsContract.TABLE_NAME, null, values);
     }
 
     /**
@@ -86,25 +117,99 @@ public class OterDataLayer {
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            oters.add(getOter(cursor));
+            oters.add(buildOter(cursor));
             cursor.moveToNext();
         }
         cursor.close();
-        Log.d("DATABASE", "getAllOters, size: " + oters.size());
         return oters;
+    }
+
+    /**
+     * Return whether or not the location is in the database
+     * @param l
+     * @return the location if it exists, null else
+     */
+    public Location getLocationIfExists(Location l) {
+        String whereClause = DatabaseContract.LocationsContract.KEY_NAME + " = ? AND " +
+            DatabaseContract.LocationsContract.KEY_LONGITUDE + " = " + l.getLongitude() + " AND " +
+            DatabaseContract.LocationsContract.KEY_LATITUDE + " = " + l.getLatitude();
+        String[] whereArgs = new String[] {l.getName()};
+        String orderBy = DatabaseContract.OtersContract.KEY_ID + " DESC";
+        Cursor cursor = database.query(
+                DatabaseContract.LocationsContract.TABLE_NAME,
+                DatabaseContract.LocationsContract.ALL_COLUMNS,
+                whereClause,
+                whereArgs,
+                null, null,
+                orderBy,
+                "1");
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return null;
+        }
+        Location loc = buildLocation(cursor);
+        cursor.close();
+        return loc;
+    }
+
+    /**
+     * Get a location from an id
+     * @param id
+     * @return the location if it exists, null else
+     */
+    public Location getLocationFromId(long id) {
+        String whereClause = DatabaseContract.LocationsContract.KEY_ID + " = " + id;
+        String orderBy = DatabaseContract.LocationsContract.KEY_ID + " DESC";
+        Cursor cursor = database.query(
+                DatabaseContract.LocationsContract.TABLE_NAME,
+                DatabaseContract.LocationsContract.ALL_COLUMNS,
+                whereClause,
+                null, null, null,
+                orderBy,
+                "1");
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return null;
+        }
+        Location loc = buildLocation(cursor);
+        cursor.close();
+        return loc;
     }
 
     /**
      * Get a oter object from a cursor.
      *
+     * IMPORTANT - this is the same cursor that may be iterating over a larger list of oters.
+     * The cursor should not be manipulated in this method, only get values from it in its current position
+     *
      * @param cursor
      * @return
      */
-    private Oter getOter(Cursor cursor) {
+    private Oter buildOter(Cursor cursor) {
         Oter oter = new Oter();
-        //TODO: Get all of the data from the cursor and add it to the oter
-        //TODO: e.g. oter.setLocationName(cursor.getString(0));
+        oter.setId(cursor.getLong(cursor.getColumnIndex(DatabaseContract.OtersContract.KEY_ID)));
+        oter.setMessage(cursor.getString(cursor.getColumnIndex(DatabaseContract.OtersContract.KEY_MESSAGE)));
+        oter.setTime(cursor.getInt(cursor.getColumnIndex(DatabaseContract.OtersContract.KEY_TIME)));
+        oter.setLocation(getLocationFromId(cursor.getLong(cursor.getColumnIndex(DatabaseContract.OtersContract.KEY_LOCATION))));
         return oter;
+    }
+
+    /**
+     * Get a Location object from a cursor.
+     *
+     * IMPORTANT - this is the same cursor that may be iterating over a larger list of locations.
+     * The cursor should not be manipulated in this method, only get values from it in its current position
+     *
+     * @param cursor
+     * @return
+     */
+    private Location buildLocation(Cursor cursor) {
+        Location l = new Location();
+        l.setId(cursor.getLong(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_ID)));
+        l.setName(cursor.getString(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_NAME)));
+        l.setLatitude(cursor.getDouble(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_LATITUDE)));
+        l.setLongitude(cursor.getDouble(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_LONGITUDE)));
+        return l;
     }
 
     /**
@@ -136,11 +241,10 @@ public class OterDataLayer {
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            oters.add(getOter(cursor));
+            oters.add(buildOter(cursor));
             cursor.moveToNext();
         }
         cursor.close();
-        Log.d("DATABASE", "getActiveOters, size: " + oters.size());
         return oters;
     }
 }

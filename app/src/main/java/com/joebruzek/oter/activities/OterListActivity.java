@@ -2,18 +2,17 @@ package com.joebruzek.oter.activities;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.joebruzek.oter.R;
-import com.joebruzek.oter.adapters.ContactListAdapter;
-import com.joebruzek.oter.adapters.CustomLinearLayoutManager;
 import com.joebruzek.oter.adapters.OterListAdapter;
+import com.joebruzek.oter.database.OterDataLayer;
 import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
 
@@ -77,6 +76,7 @@ public class OterListActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         adapter = new OterListAdapter(this, testOters);
         recyclerView.setAdapter(adapter);
+
     }
 
 
