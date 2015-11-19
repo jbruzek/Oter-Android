@@ -28,6 +28,7 @@ public class OterListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private OterListAdapter adapter;
     private FloatingActionButton fab;
+    private OterDataLayer dataLayer;
 
     /**
      * Create the activity
@@ -44,6 +45,9 @@ public class OterListActivity extends AppCompatActivity {
             toolbar.setTitle(R.string.app_name);
             setSupportActionBar(toolbar);
         }
+
+        dataLayer = new OterDataLayer(this);
+        dataLayer.openDB();
 
         //test data
         ArrayList<Oter> testOters = new ArrayList<Oter>();
@@ -62,19 +66,21 @@ public class OterListActivity extends AppCompatActivity {
             contacts.add("Mark Olsen");
             contacts.add("Alexia Lutz");
             for (int j = 0; j < i; j++) {
-                contacts.add("your mom");
+                contacts.add("temp");
             }
             o.setContacts(contacts);
             o.setMessage("\"" + messages[i] + "\"");
             o.setTime(15);
             testOters.add(o);
+//            dataLayer.insertOter(o);
         }
 
         recyclerView = (RecyclerView)findViewById(R.id.oter_list_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        adapter = new OterListAdapter(this, testOters);
+        adapter = new OterListAdapter(this, dataLayer.getAllOtersCursor(1000));
+        Log.e("DATABASE2", adapter.getItemCount() + "");
         recyclerView.setAdapter(adapter);
 
     }

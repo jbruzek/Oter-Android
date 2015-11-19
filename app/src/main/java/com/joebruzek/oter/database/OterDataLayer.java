@@ -57,6 +57,10 @@ public class OterDataLayer {
      * @return if the cursors point to data that is the same
      */
     public static boolean cursorsEqual(Cursor c1, Cursor c2) {
+        if (c1 == null || c2 == null) {
+            return false;
+        }
+
         String[] columns = c1.getColumnNames();
         //check to see if the column names are equal
         if (!Arrays.equals(columns, c2.getColumnNames())) {
@@ -119,6 +123,7 @@ public class OterDataLayer {
         ContentValues values = new ContentValues();
         values.put(DatabaseContract.OtersContract.KEY_MESSAGE, oter.getMessage());
         values.put(DatabaseContract.OtersContract.KEY_LOCATION, locationId);
+        values.put(DatabaseContract.OtersContract.KEY_TIME, oter.getTime());
         oter.setId(database.insert(DatabaseContract.OtersContract.TABLE_NAME, null, values));
 
         //notify the listeners
@@ -173,10 +178,10 @@ public class OterDataLayer {
 
         Cursor cursor = getAllOtersCursor(limit);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            oters.add(buildOter(cursor));
-            cursor.moveToNext();
+        if (cursor != null && cursor.moveToFirst()) {
+            while (cursor.moveToNext()) {
+                oters.add(buildOter(cursor));
+            }
         }
         cursor.close();
         return oters;
@@ -205,9 +210,13 @@ public class OterDataLayer {
             cursor.close();
             return null;
         }
-        Location loc = buildLocation(cursor);
+        if (cursor.moveToFirst()) {
+            Location loc = buildLocation(cursor);
+            cursor.close();
+            return loc;
+        }
         cursor.close();
-        return loc;
+        return new Location();
     }
 
     /**
@@ -229,7 +238,10 @@ public class OterDataLayer {
             cursor.close();
             return null;
         }
-        Location loc = buildLocation(cursor);
+        Location loc = null;
+        if (cursor.moveToFirst()) {
+            loc = buildLocation(cursor);
+        }
         cursor.close();
         return loc;
     }
@@ -243,7 +255,7 @@ public class OterDataLayer {
      * @param cursor
      * @return
      */
-    private Oter buildOter(Cursor cursor) {
+    public Oter buildOter(Cursor cursor) {
         Oter oter = new Oter();
         oter.setId(cursor.getLong(cursor.getColumnIndex(DatabaseContract.OtersContract.KEY_ID)));
         oter.setMessage(cursor.getString(cursor.getColumnIndex(DatabaseContract.OtersContract.KEY_MESSAGE)));
@@ -261,7 +273,7 @@ public class OterDataLayer {
      * @param cursor
      * @return
      */
-    private Location buildLocation(Cursor cursor) {
+    public Location buildLocation(Cursor cursor) {
         Location l = new Location();
         l.setId(cursor.getLong(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_ID)));
         l.setName(cursor.getString(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_NAME)));

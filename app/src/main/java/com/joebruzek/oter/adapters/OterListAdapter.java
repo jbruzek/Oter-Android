@@ -2,6 +2,7 @@ package com.joebruzek.oter.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.activities.EditOterActivity;
+import com.joebruzek.oter.database.OterDataLayer;
 import com.joebruzek.oter.models.Oter;
 import com.joebruzek.oter.utilities.Measurements;
 import com.joebruzek.oter.utilities.Strings;
@@ -25,26 +27,33 @@ import java.util.List;
 /**
  * Adapter for the Oter List recyclerView.
  *
+ * This adapter uses a cursor that belongs to the Oter table in the database
+ *
  * Created by jbruzek on 11/13/15.
  */
 public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHolder> {
 
-    //TODO: Change the adapter to work with a cursor, like this:
-    //https://gist.github.com/skyfishjy/443b7448f59be978bc59
-
     private List<Oter> dataList;
+    private Cursor cursor;
     private Context context;
     private boolean empty = false;
+    private OterDataLayer dataLayer;
 
-    public OterListAdapter(Context c, List<Oter> list) {
+    /**
+     * Constructor
+     * @param c Context
+     * @param curs The cursor over the data (Must be a cursor over the Oters table)
+     */
+    public OterListAdapter(Context c, Cursor curs) {
         context = c;
+        dataLayer = new OterDataLayer(c);
+        dataLayer.openDB();
 
-        //deep copy
-        dataList = new ArrayList<Oter>();
-        dataList.addAll(list);
+        if (curs != null) {
+            switchCursor(curs);
+        }
 
-        if (dataList.size() == 0) {
-            dataList.add(new Oter());
+        if (cursor == null || cursor.getCount() == 0) {
             empty = true;
         }
     }
@@ -100,9 +109,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View view;
-        Log.d("Inflating", dataList.size() + "");
         if (empty) {
-            Log.d("Inflating", "no oters");
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.oter_list_item_no_oters, parent, false);
         } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.oter_list_item, parent, false);
@@ -119,15 +126,22 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (!empty) {
-            holder.oter = dataList.get(position);
-            holder.location.setText(dataList.get(position).getLocation().getName());
-            holder.text.setText(dataList.get(position).getMessage());
-            holder.time.setText(Strings.buildTimeString(dataList.get(position).getTime()));
+            if (!cursor.moveToPosition(position)) {
+                throw new IllegalStateException("couldn't move cursor to position " + position);
+            }
+
+            holder.oter = dataLayer.buildOter(cursor);
+            holder.location.setText(holder.oter.getLocation().getName());
+            holder.text.setText(holder.oter.getMessage());
+            holder.time.setText(Strings.buildTimeString(holder.oter.getTime()));
 
             int limit = 2;
 
             //set the height of the contact list
-            int height = Math.min(dataList.get(position).getContacts().size(), limit + 1);
+            //TODO: implement comments
+            int height = 2;
+            //int height = Math.min(holder.oter.getContacts().size(), limit + 1);
+
             holder.contactsList.getLayoutParams().height = Measurements.dpToPixel(context, (56 * height));
             holder.contactsList.requestLayout();
 
@@ -136,23 +150,48 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             LinearLayoutManager layoutManager = new LinearLayoutManager(context);
             holder.contactsList.setLayoutManager(layoutManager);
             holder.contactsList.setHasFixedSize(true);
-            holder.contactsList.setAdapter(new ContactListAdapter(context, dataList.get(position).getContacts(), limit));
+
+            //TODO: implement contacts
+            holder.contactsList.setAdapter(new ContactListAdapter(context, new ArrayList<String>(), limit));
+            //holder.contactsList.setAdapter(new ContactListAdapter(context, holder.oter.getContacts(), limit));
 
             if (position == 0) {
                 //TODO: add 6dp to the top padding
             }
-            else if (position == dataList.size() - 1) {
+            else if (position == getItemCount() - 1) {
                 //TODO: add 6dp to the bottom padding
             }
         }
     }
 
     /**
-     * Get the number of items in the list
+     * Get the number of items in the dataset
+     *
+     * If the dataset is empty, return 1 so we can imflate the "empty list" viewHolder
      * @return
      */
     @Override
     public int getItemCount() {
-        return dataList.size();
+        if (empty) {
+            return 1;
+        }
+        return cursor.getCount();
     }
+
+    /**
+     * switch the existing cursor with a new one
+     * @param c
+     */
+    public void switchCursor(Cursor c) {
+        if (OterDataLayer.cursorsEqual(cursor, c)) {
+            c.close();
+            return;
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        cursor = c;
+        cursor.moveToFirst();
+    }
+
 }
