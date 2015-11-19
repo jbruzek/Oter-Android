@@ -12,22 +12,12 @@ import android.util.Log;
  */
 public class DataBaseAdapter extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "oter.db";
-    private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_CREATE = "";
-    private static final String DATABASE_DROP_TABLES = "";
-
-    //Public strings
-    public static final String TABLE_OTERS = "oters";
-    public static final String COLUMN_ID = "_id";
-    //TODO: Add the rest of the column names as public static final strings
-
     /**
      * Constructor
      * @param context
      */
     public DataBaseAdapter(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DatabaseContract.DATABASE_NAME, null, DatabaseContract.DATABASE_VERSION);
     }
 
     /**
@@ -36,8 +26,9 @@ public class DataBaseAdapter extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase database) {
-        //TODO: create the DATABASE_CREATE string
-        database.execSQL(DATABASE_CREATE);
+        for (int i = 0; i < DatabaseContract.DATABASE_CREATE_TABLES_ARRAY.length; i++) {
+            database.execSQL(DatabaseContract.DATABASE_CREATE_TABLES_ARRAY[i]);
+        }
     }
 
     /**
@@ -51,8 +42,10 @@ public class DataBaseAdapter extends SQLiteOpenHelper {
         Log.w(DataBaseAdapter.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
-        //TODO: create the DATABASE_DROP_TABLES string
-        database.execSQL(DATABASE_DROP_TABLES);
+
+        for (int i = 0; i < DatabaseContract.DATABASE_DROP_TABLES_ARRAY.length; i++) {
+            database.execSQL(DatabaseContract.DATABASE_DROP_TABLES_ARRAY[i]);
+        }
         onCreate(database);
     }
 }

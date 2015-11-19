@@ -22,6 +22,9 @@ import java.util.List;
  */
 public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapter.ViewHolder> {
 
+    //TODO: Change the adapter to work with a cursor, like this:
+    //https://gist.github.com/skyfishjy/443b7448f59be978bc59
+
     private List<String> dataList;
     private Context context;
 

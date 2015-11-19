@@ -21,10 +21,6 @@ public class OterDataLayer {
 
     private SQLiteDatabase database;
     private DataBaseAdapter adapter;
-    private String[] allColumns = {
-            //TODO: Add the columns as public static final strings in DataBaseAdapter
-            //TODO: Add them to this array
-    };
 
     /**
      * Constructor. Initialize the DatabaseAdapter.
@@ -58,7 +54,7 @@ public class OterDataLayer {
         ContentValues values = new ContentValues();
         //TODO: Add the values from the Oter to the contentValues
         //TODO: i.e. values.put(adapter.COLUMN_TIME, oter.getTime());
-        database.insert(adapter.TABLE_OTERS, null, values);
+        database.insert(DatabaseContract.OtersContract.TABLE_NAME, null, values);
     }
 
     /**
@@ -68,9 +64,13 @@ public class OterDataLayer {
      * @return
      */
     public Cursor getAllOtersCursor(int limit) {
-        String orderBy = adapter.COLUMN_ID + " DESC";
-        return database.query(adapter.TABLE_OTERS,
-                allColumns, null, null, null, null, orderBy, String.valueOf(limit));
+        String orderBy = DatabaseContract.OtersContract.KEY_ID + " DESC";
+        return database.query(
+                DatabaseContract.OtersContract.TABLE_NAME,
+                DatabaseContract.OtersContract.ALL_COLUMNS,
+                null, null, null, null,
+                orderBy,
+                String.valueOf(limit));
     }
 
     /**
@@ -115,9 +115,14 @@ public class OterDataLayer {
     public Cursor getActiveOtersCursor() {
         String whereClause = "active = ?";
         String[] whereArgs = new String[] {"true"};
-        String orderBy = adapter.COLUMN_ID + " DESC";
-        return database.query(adapter.TABLE_OTERS,
-                allColumns, whereClause, whereArgs, null, null, orderBy);
+        String orderBy = DatabaseContract.OtersContract.KEY_ID + " DESC";
+        return database.query(
+                DatabaseContract.OtersContract.TABLE_NAME,
+                DatabaseContract.OtersContract.ALL_COLUMNS,
+                whereClause,
+                whereArgs,
+                null, null,
+                orderBy);
     }
 
 
