@@ -68,7 +68,10 @@ public class Oter implements Parcelable {
      * Default constructor
      */
     public Oter() {
-        //TODO: initialize. Maybe make alternate constructors that take parameters
+        //default values
+        time = 15;
+        message = "";
+        location = null;
     }
 
     /**

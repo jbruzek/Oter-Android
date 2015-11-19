@@ -22,6 +22,8 @@ import java.util.List;
  */
 public class OterDataLayer {
 
+    private final static int OTER_LIMIT = 10000;
+
     private SQLiteDatabase database;
     private DatabaseAdapter adapter;
     private DatabaseListenerComposite listener;
@@ -60,6 +62,9 @@ public class OterDataLayer {
         if (c1 == null || c2 == null) {
             return false;
         }
+
+        c1.moveToFirst();
+        c2.moveToFirst();
 
         String[] columns = c1.getColumnNames();
         //check to see if the column names are equal
@@ -168,6 +173,14 @@ public class OterDataLayer {
     }
 
     /**
+     * Get all oters without specifying a limit
+     * @return
+     */
+    public Cursor getAllOtersCursor() {
+        return getAllOtersCursor(OTER_LIMIT);
+    }
+
+    /**
      * Get a list of all the oters in the database
      *
      * @param limit the limit for how many oters you want to retrieve.
@@ -185,6 +198,14 @@ public class OterDataLayer {
         }
         cursor.close();
         return oters;
+    }
+
+    /**
+     * Get a list of oters without specifying a limit
+     * @return
+     */
+    public List<Oter> getAllOters() {
+        return getAllOters(OTER_LIMIT);
     }
 
     /**

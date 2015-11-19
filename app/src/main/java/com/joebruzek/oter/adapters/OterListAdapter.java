@@ -16,6 +16,9 @@ import android.widget.Toast;
 
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.activities.EditOterActivity;
+import com.joebruzek.oter.database.DatabaseContract;
+import com.joebruzek.oter.database.DatabaseListener;
+import com.joebruzek.oter.database.DatabaseListenerComposite;
 import com.joebruzek.oter.database.OterDataLayer;
 import com.joebruzek.oter.models.Oter;
 import com.joebruzek.oter.utilities.Measurements;
@@ -31,7 +34,7 @@ import java.util.List;
  *
  * Created by jbruzek on 11/13/15.
  */
-public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHolder> {
+public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHolder> implements DatabaseListener {
 
     private List<Oter> dataList;
     private Cursor cursor;
@@ -56,6 +59,9 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
         if (cursor == null || cursor.getCount() == 0) {
             empty = true;
         }
+
+        //listen for data changes
+        DatabaseListenerComposite.getInstance().registerListener(this);
     }
 
     /**
@@ -192,6 +198,47 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
         }
         cursor = c;
         cursor.moveToFirst();
+        notifyDataSetChanged();
     }
 
+    /**
+     * Update the list with a new cursor if the oter table has changed
+     * @param tableName
+     */
+    private void updateIfChanged(String tableName) {
+        if (tableName.equals(DatabaseContract.OtersContract.TABLE_NAME)) {
+            Cursor newCurs = dataLayer.getAllOtersCursor();
+            switchCursor(newCurs);
+        }
+    }
+
+    /**
+     * An item in the database has been updated
+     * @param tableName
+     * @param id
+     */
+    @Override
+    public void onItemUpdated(String tableName, long id) {
+        updateIfChanged(tableName);
+    }
+
+    /**
+     * An item has been inserted into the database
+     * @param tableName
+     * @param id
+     */
+    @Override
+    public void onItemInserted(String tableName, long id) {
+        updateIfChanged(tableName);
+    }
+
+    /**
+     * An item has been deleted from the database
+     * @param tableName
+     * @param id
+     */
+    @Override
+    public void onItemDeleted(String tableName, long id) {
+        updateIfChanged(tableName);
+    }
 }

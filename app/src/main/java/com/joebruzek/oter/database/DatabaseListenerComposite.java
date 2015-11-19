@@ -36,6 +36,22 @@ public class DatabaseListenerComposite implements DatabaseListener {
     }
 
     /**
+     * Register a listener to the composite
+     * @param li
+     */
+    public void registerListener(DatabaseListener li) {
+        listeners.add(li);
+    }
+
+    /**
+     * Remove a listener from the composite
+     * @param li
+     */
+    public void removeListener(DatabaseListener li) {
+        listeners.remove(li);
+    }
+
+    /**
      * Item updated in the database
      */
     @Override

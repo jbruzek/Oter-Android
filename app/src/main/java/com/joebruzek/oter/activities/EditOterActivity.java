@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.adapters.ContactListAdapter;
 import com.joebruzek.oter.adapters.OterListAdapter;
+import com.joebruzek.oter.database.OterDataLayer;
 import com.joebruzek.oter.dialogs.AddLocationDialog;
 import com.joebruzek.oter.dialogs.SetTimeDialog;
 import com.joebruzek.oter.models.Location;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 public class EditOterActivity extends AppCompatActivity implements SetTimeDialog.SetTimeDialogListener, AddLocationDialog.AddLocationDialogListener {
 
     private Oter oter;
-    Toolbar toolbar;
+    private Toolbar toolbar;
     private EditText editMessage;
     private ImageButton timeButton;
     private ImageButton locationButton;
@@ -40,6 +41,8 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
     private TextView timeText;
     private RecyclerView recyclerView;
     private Button scheduleButton;
+    private boolean newOter = true;
+    private OterDataLayer dataLayer;
 
     public EditOterActivity() {
     }
@@ -56,6 +59,9 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         Bundle b = getIntent().getExtras();
         if (b != null) {
             oter = (Oter) b.getParcelable("oter");
+            newOter = false;
+        } else {
+            oter = new Oter();
         }
 
         //Get the references to all the buttons and stuff
@@ -80,6 +86,9 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         contacts.add("Alexia Lutz");
         ContactListAdapter adapter = new ContactListAdapter(this, contacts, true);
         recyclerView.setAdapter(adapter);
+
+        dataLayer = new OterDataLayer(this);
+        dataLayer.openDB();
     }
 
     /**
@@ -140,26 +149,61 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         scheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Clicked schedule button", Toast.LENGTH_SHORT).show();
+                scheduleButtonClicked();
             }
         });
     }
 
+    /**
+     * When the schedule button is clicked. Either add an oter to the database or update an oter in the database
+     */
+    private void scheduleButtonClicked() {
+        //TODO: Add a LOT of invalid data checks so we don't screw up the database
+
+        oter.setMessage(editMessage.getText().toString());
+
+        //TODO: implement addLocationDialog
+        Location l = new Location();
+        l.setName("New oter location");
+        oter.setLocation(l);
+        //end todo
+
+        if (newOter) {
+            dataLayer.insertOter(oter);
+        }
+
+        finish();
+    }
+
+    /**
+     * Set the information on the screen to fit the current oter
+     */
     private void setCurrentOterInformation() {
-        if (oter != null) {
+        if (!newOter) {
             toolbar.setTitle(getResources().getString(R.string.activity_edit_oter_name));
             editMessage.setText(oter.getMessage());
 
-            setTimeText();
-
             scheduleButton.setText(getResources().getString(R.string.save_oter));
+        }
+
+        setTimeText();
+    }
+
+    /**
+     * Set the time text on the screen to indicate the user's choice
+     */
+    private void setTimeText() {
+        if (oter.getLocation() == null) {
+            timeText.setText(Strings.buildTimeString(oter.getTime()));
+        } else {
+            timeText.setText(Strings.buildTimeString(oter.getTime(), oter.getLocation().getName()));
         }
     }
 
-    private void setTimeText() {
-        timeText.setText(Strings.buildTimeString(oter.getTime(), oter.getLocation().getName()));
-    }
-
+    /**
+     * When the user selects confirm on the setTimeDialog. Set the time to their choice.
+     * @param l
+     */
     @Override
     public void onSetTimePositiveClick(SetTimeDialog l) {
         oter.setTime(l.getTime());
@@ -167,16 +211,28 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         l.dismiss();
     }
 
+    /**
+     * When the user selects cancel on the setTimeDialog.
+     * @param l
+     */
     @Override
     public void onSetTimeNegativeClick(SetTimeDialog l) {
         l.dismiss();
     }
 
+    /**
+     * When the user selects confirm on the addLocationDialog
+     * @param l
+     */
     @Override
     public void onAddLocationPositiveClick(AddLocationDialog l) {
 
     }
 
+    /**
+     * When the user selects cancel on the addLocationDialog
+     * @param l
+     */
     @Override
     public void onAddLocationNegativeClick(AddLocationDialog l) {
         l.dismiss();
