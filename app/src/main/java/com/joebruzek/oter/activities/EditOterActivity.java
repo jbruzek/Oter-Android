@@ -61,6 +61,7 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
             oter = (Oter) b.getParcelable("oter");
             newOter = false;
         } else {
+            newOter = true;
             oter = new Oter();
         }
 
@@ -170,6 +171,8 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
 
         if (newOter) {
             dataLayer.insertOter(oter);
+        } else {
+            dataLayer.updateOter(oter);
         }
 
         finish();

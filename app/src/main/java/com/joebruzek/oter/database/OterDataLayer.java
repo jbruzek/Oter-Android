@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.ContactsContract;
-import android.util.Log;
 
 import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
@@ -68,13 +66,15 @@ public class OterDataLayer {
 
         String[] columns = c1.getColumnNames();
         //check to see if the column names are equal
-        if (!Arrays.equals(columns, c2.getColumnNames())) {
+        if (!Arrays.equals(columns, c2.getColumnNames())
+                || c1.getCount() != c2.getCount()) {
             return false;
         }
 
         //check the values of each column
         for (int i = 0; i < columns.length; i++) {
-            if (c1.getType(i) != c2.getType(i)) {
+            if (c1.getType(i)
+                    != c2.getType(i)) {
                 return false;
             }
             switch (c1.getType(i)) {
@@ -116,13 +116,7 @@ public class OterDataLayer {
      */
     public long insertOter(Oter oter) {
         //Check to see if the location is already in the database
-        Location l = getLocationIfExists(oter.getLocation());
-        long locationId;
-        if (l == null) {
-            locationId = insertLocation(oter.getLocation());
-        } else {
-            locationId = l.getId();
-        }
+        long locationId = insertLocationIfNotExists(oter.getLocation());
 
         //insert the oter into the database
         ContentValues values = new ContentValues();
@@ -166,7 +160,7 @@ public class OterDataLayer {
         if (l2 == null) {
             return insertLocation(l);
         } else {
-            return l.getId();
+            return l2.getId();
         }
     }
 

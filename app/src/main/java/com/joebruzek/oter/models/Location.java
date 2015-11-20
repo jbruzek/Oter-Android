@@ -15,6 +15,11 @@ public class Location implements Parcelable {
     private double longitude;
     private long id;
 
+    @Override
+    public String toString() {
+        return "LOCATION:\nid: " + id + "\nname: " + name + "\nlon: " + longitude + "\nlat: " + latitude;
+    }
+
     /**
      * Needed for Parcelable
      * @return
@@ -55,7 +60,9 @@ public class Location implements Parcelable {
      * Default constructor
      */
     public Location() {
-        //TODO: initialize. Maybe add alternate constructors that take parameters
+        //default values
+        latitude = 0.0;
+        longitude = 0.0;
     }
 
     /**

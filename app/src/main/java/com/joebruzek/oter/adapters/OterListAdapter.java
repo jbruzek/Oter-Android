@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,6 +35,8 @@ import java.util.List;
  */
 public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHolder> implements DatabaseListener {
 
+    private static final int EMPTY_VIEW_ITEM = 0;
+    private static final int OTER_VIEW_ITEM = 1;
     private List<Oter> dataList;
     private Cursor cursor;
     private Context context;
@@ -56,9 +57,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             switchCursor(curs);
         }
 
-        if (cursor == null || cursor.getCount() == 0) {
-            empty = true;
-        }
+        empty = isEmpty(cursor);
 
         //listen for data changes
         DatabaseListenerComposite.getInstance().registerListener(this);
@@ -86,12 +85,12 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             if (!empty) {
                 itemView.setClickable(true);
                 itemView.setOnClickListener(this);
-
-                location = (TextView) itemView.findViewById(R.id.oter_item_title);
-                text = (TextView) itemView.findViewById(R.id.oter_item_text);
-                time = (TextView) itemView.findViewById(R.id.oter_item_time);
-                contactsList = (RecyclerView) itemView.findViewById(R.id.oter_item_contact_list);
             }
+
+            location = (TextView) itemView.findViewById(R.id.oter_item_title);
+            text = (TextView) itemView.findViewById(R.id.oter_item_text);
+            time = (TextView) itemView.findViewById(R.id.oter_item_time);
+            contactsList = (RecyclerView) itemView.findViewById(R.id.oter_item_contact_list);
         }
 
         /**
@@ -109,19 +108,19 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
     /**
      * Creation of the viewholder
      * @param parent
-     * @param i
+     * @param viewType EMPTY_VIEW_ITEM or OTER_VIEW_ITEM
      * @return
      */
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
-        View view;
-        if (empty) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.oter_list_item_no_oters, parent, false);
-        } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.oter_list_item, parent, false);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case EMPTY_VIEW_ITEM:
+                return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.oter_list_item_no_oters, parent, false));
+            case OTER_VIEW_ITEM:
+                return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.oter_list_item, parent, false));
         }
-        ViewHolder vh = new ViewHolder(view);
-        return vh;
+        //something went wrong
+        return null;
     }
 
     /**
@@ -131,7 +130,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (!empty) {
+        if (getItemViewType(position) == OTER_VIEW_ITEM) {
             if (!cursor.moveToPosition(position)) {
                 throw new IllegalStateException("couldn't move cursor to position " + position);
             }
@@ -185,6 +184,20 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
     }
 
     /**
+     * Get the view type for the position. Used to decide if we're inflating a placeholder view or an oter view
+     * @param position
+     * @return
+     */
+    @Override
+    public int getItemViewType(int position) {
+        if(empty) {
+            return EMPTY_VIEW_ITEM;
+        }
+
+        return OTER_VIEW_ITEM;
+    }
+
+    /**
      * switch the existing cursor with a new one
      * @param c
      */
@@ -193,12 +206,24 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             c.close();
             return;
         }
+
         if (cursor != null) {
             cursor.close();
         }
         cursor = c;
         cursor.moveToFirst();
+        empty = isEmpty(cursor);
         notifyDataSetChanged();
+    }
+
+    /**
+     * Check to see if the cursor is empty
+     *
+     * @param c the cursor to check
+     * @return
+     */
+    private boolean isEmpty(Cursor c) {
+        return (c == null || c.getCount() == 0);
     }
 
     /**

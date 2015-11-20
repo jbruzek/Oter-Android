@@ -28,6 +28,11 @@ public class Oter implements Parcelable {
 
     private ArrayList<String> contacts;
 
+    @Override
+    public String toString() {
+        return "OTER:\nid: " + id + "\nmessage: " + message + "\ntime: " + time + "\nlocation: " + location;
+    }
+
     /**
      * Describe the contents of the parcel
      * @return
