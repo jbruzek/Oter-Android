@@ -1,6 +1,8 @@
 package com.joebruzek.oter.activities;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -17,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.adapters.ContactListAdapter;
-import com.joebruzek.oter.adapters.OterListAdapter;
 import com.joebruzek.oter.database.OterDataLayer;
 import com.joebruzek.oter.dialogs.AddLocationDialog;
 import com.joebruzek.oter.dialogs.SetTimeDialog;
@@ -41,6 +42,7 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
     private TextView timeText;
     private RecyclerView recyclerView;
     private Button scheduleButton;
+    private Button deleteButton;
     private boolean newOter = true;
     private OterDataLayer dataLayer;
 
@@ -119,6 +121,7 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         timeText = (TextView) findViewById(R.id.edit_oter_time);
         recyclerView = (RecyclerView)findViewById(R.id.edit_oter_contacts_recycler_view);
         scheduleButton = (Button) findViewById(R.id.edit_oter_schedule_button);
+        deleteButton = (Button) findViewById(R.id.edit_oter_delete_button);
 
         setClickListeners();
     }
@@ -153,6 +156,12 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
                 scheduleButtonClicked();
             }
         });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteButtonClicked();
+            }
+        });
     }
 
     /**
@@ -179,6 +188,29 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
     }
 
     /**
+     * When the delete button is clicked. Show a dialog confirming the deletion
+     */
+    private void deleteButtonClicked() {
+        //Toast.makeText(this, "Delete", Toast.LENGTH_SHORT).show();
+        new AlertDialog.Builder(this)
+                .setMessage("Delete this Oter?")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dataLayer.removeOter(oter.getId());
+                        finish();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //do nothing
+                    }
+                })
+                .show();
+    }
+
+    /**
      * Set the information on the screen to fit the current oter
      */
     private void setCurrentOterInformation() {
@@ -187,6 +219,8 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
             editMessage.setText(oter.getMessage());
 
             scheduleButton.setText(getResources().getString(R.string.save_oter));
+
+            deleteButton.setVisibility(View.VISIBLE);
         }
 
         setTimeText();

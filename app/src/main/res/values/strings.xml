@@ -16,6 +16,7 @@
 
     <string name="text_message_hint">Type your message here</string>
     <string name="schedule_oter">Schedule</string>
+    <string name="delete_oter">Delete</string>
     <string name="save_oter">Save</string>
 
     <string name="test_title">Mom\'s House</string>

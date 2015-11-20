@@ -37,7 +37,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
 
     private static final int EMPTY_VIEW_ITEM = 0;
     private static final int OTER_VIEW_ITEM = 1;
-    private List<Oter> dataList;
+
     private Cursor cursor;
     private Context context;
     private boolean empty = false;
