@@ -2,9 +2,13 @@ package com.joebruzek.oter.activities;
 
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,8 +26,10 @@ import com.joebruzek.oter.adapters.ContactListAdapter;
 import com.joebruzek.oter.database.OterDataLayer;
 import com.joebruzek.oter.dialogs.AddLocationDialog;
 import com.joebruzek.oter.dialogs.SetTimeDialog;
+import com.joebruzek.oter.models.Contact;
 import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
+import com.joebruzek.oter.utilities.Contacts;
 import com.joebruzek.oter.utilities.Strings;
 
 import java.util.ArrayList;
@@ -32,6 +38,8 @@ import java.util.ArrayList;
  * Created by jbruzek on 11/15/15.
  */
 public class EditOterActivity extends AppCompatActivity implements SetTimeDialog.SetTimeDialogListener, AddLocationDialog.AddLocationDialogListener {
+
+    private static final int CONTACT_PICKER_RESULT = 5013;
 
     private Oter oter;
     private Toolbar toolbar;
@@ -82,12 +90,7 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        ArrayList<String> contacts = new ArrayList<String>();
-        contacts.add("Joe Bruzek");
-        contacts.add("Yash Pant");
-        contacts.add("Mark Olsen");
-        contacts.add("Alexia Lutz");
-        ContactListAdapter adapter = new ContactListAdapter(this, contacts, true);
+        ContactListAdapter adapter = new ContactListAdapter(this, oter.getContacts(), true);
         recyclerView.setAdapter(adapter);
 
         dataLayer = new OterDataLayer(this);
@@ -147,7 +150,8 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         contactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Clicked contact button", Toast.LENGTH_SHORT).show();
+                Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+                startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
             }
         });
         scheduleButton.setOnClickListener(new View.OnClickListener() {
@@ -197,7 +201,7 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        dataLayer.removeOter(oter.getId());
+                        dataLayer.removeOter(oter);
                         finish();
                     }
                 })
@@ -235,6 +239,38 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         } else {
             timeText.setText(Strings.buildTimeString(oter.getTime(), oter.getLocation().getName()));
         }
+    }
+
+    /**
+     * Called when an activity returns a result to this activity. In this case it will be
+     * when the user adds a contact
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (resultCode == RESULT_OK) {
+            switch(requestCode){
+                case CONTACT_PICKER_RESULT:
+                    Uri result = data.getData();
+                    handleContactSelected(result);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Handle a contact that the user selected
+     * @param result
+     */
+    private void handleContactSelected(Uri result)
+    {
+        Contact c = Contacts.getContact(this, result);
+        oter.getContacts().add(c.getNumber());
+
+        ((ContactListAdapter)recyclerView.getAdapter()).getDataList().add(c.getNumber());
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     /**

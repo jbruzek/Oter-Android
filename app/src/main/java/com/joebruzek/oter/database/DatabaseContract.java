@@ -12,7 +12,7 @@ import com.joebruzek.oter.models.Location;
  */
 public final class DatabaseContract {
 
-    public static final  int    DATABASE_VERSION   = 1;
+    public static final  int    DATABASE_VERSION   = 2;
     public static final  String DATABASE_NAME      = "oter.db";
     private static final String TEXT_TYPE          = " TEXT";
     private static final String INTEGER_TYPE       = " INTEGER";
@@ -158,7 +158,7 @@ public final class DatabaseContract {
         public static final String CREATE_TABLE = "CREATE TABLE " +
                 TABLE_NAME + " (" +
                 KEY_ID + " INTEGER PRIMARY KEY," +
-                KEY_NUMBER + TEXT_TYPE + COMMA_SEP +
+                KEY_NUMBER + TEXT_TYPE +
                 " )";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;

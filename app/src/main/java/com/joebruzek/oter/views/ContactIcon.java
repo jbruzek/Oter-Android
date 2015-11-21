@@ -2,13 +2,18 @@ package com.joebruzek.oter.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.joebruzek.oter.R;
+import com.joebruzek.oter.models.Contact;
 import com.joebruzek.oter.utilities.Measurements;
 import com.joebruzek.oter.utilities.Strings;
 
@@ -26,6 +31,7 @@ public class ContactIcon extends View {
     private String contactName;
     private String initials;
     private int iconColor;
+    private Contact contact;
 
     /**
      * Constructor. Get the attributes from the XML declaration
@@ -66,8 +72,15 @@ public class ContactIcon extends View {
         int radius = Math.min(this.getMeasuredHeight(), this.getMeasuredWidth()) / 2;
         canvas.drawCircle(centerX, centerY, radius, paintStyle);
 
+
+        //Set the picture if there is one
+        if (contact != null && contact.getPicture() != null) {
+            Rect result = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
+            Bitmap newBitmap = getRoundedCornerBitmap(contact.getPicture(), canvas.getHeight() / 2);
+            canvas.drawBitmap(newBitmap, null, result, paintStyle);
+        }
         //draw the text if there is any
-        if (!initials.equals("")) {
+        else if (!initials.equals("")) {
             paintStyle.setColor(getResources().getColor(R.color.white));
             paintStyle.setTextAlign(Paint.Align.CENTER);
             float textSize = radius;
@@ -122,10 +135,44 @@ public class ContactIcon extends View {
         requestLayout();
     }
 
-    /*
-    Get the contact photo and display it
-
-    http://developer.android.com/reference/android/provider/ContactsContract.Contacts.Photo.html
-    http://developer.android.com/reference/android/graphics/BitmapFactory.html
+    /**
+     * Set the contact model for this icon
+     * @param c
      */
+    public void setContact(Contact c) {
+        this.contact = c;
+        this.contactName = c.getName();
+        this.initials = Strings.getInitials(c.getName());
+        invalidate();
+        requestLayout();
+    }
+
+    /**
+     * Turn a bitmap into a rounded bitmap. Code taken from here:
+     * http://stackoverflow.com/a/3292810/3682482
+     * @param bitmap
+     * @param pixels
+     * @return
+     */
+    private static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = pixels;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+    }
 }

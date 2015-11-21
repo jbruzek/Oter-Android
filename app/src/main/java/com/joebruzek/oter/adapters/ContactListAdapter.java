@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joebruzek.oter.R;
+import com.joebruzek.oter.models.Contact;
+import com.joebruzek.oter.utilities.Contacts;
 import com.joebruzek.oter.views.ContactIcon;
 
 import java.util.ArrayList;
@@ -22,6 +24,9 @@ import java.util.List;
  * Created by jbruzek on 11/14/15.
  */
 public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ViewHolder> {
+
+    private static final int ROLLOVER_ITEM = 0;
+    private static final int CONTACT_ITEM = 1;
 
     private List<String> dataList;
     private Context context;
@@ -69,6 +74,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         ContactIcon icon;
         TextView name;
         ImageButton delete;
+        Contact contact;
 
         /**
          * Create the viewholder for the item
@@ -85,7 +91,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, "Delete " + name.getText().toString(), Toast.LENGTH_SHORT).show();
+                    dataList.remove(contact.getNumber());
+                    notifyDataSetChanged();
                 }
             });
         }
@@ -94,13 +101,12 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     /**
      * Creation of the viewholder
      * @param parent
-     * @param i
+     * @param viewType
      * @return
      */
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        Log.d("Inflating", dataList.size() + "");
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_list_item, parent, false);
         ViewHolder vh = new ViewHolder(view);
         return vh;
@@ -113,12 +119,16 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (position == dataList.size() - 1 && hitLimit) {
-            holder.name.setText("and " + rollover + " other people");
-        } else {
-            holder.name.setText(dataList.get(position));
+        switch(getItemViewType(position)) {
+            case ROLLOVER_ITEM:
+                holder.name.setText("and " + rollover + " other people");
+                holder.icon.setContactName("+ " + rollover);
+                break;
+            case CONTACT_ITEM:
+                holder.contact = Contacts.getContact(context, dataList.get(position));
+                holder.name.setText(holder.contact.getName());
+                holder.icon.setContact(holder.contact);
         }
-        holder.icon.setContactName(dataList.get(position));
 
         //only show the x button if this list is editable
         if (!editable) {
@@ -135,17 +145,38 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         return dataList.size();
     }
 
+    /**
+     * Format the data list to fit the limit size
+     */
     private void formatDataSetToLimit() {
         if (dataList.size() <= limit) {
             return;
         }
         hitLimit = true;
         ArrayList<String> temp = new ArrayList<String>();
-        for (int i = 0; i < limit; i++) {
+        for (int i = 0; i < limit + 1; i++) {
             temp.add(dataList.get(i));
         }
-        rollover = dataList.size() - limit;
-        temp.add("+ " + rollover);
-        dataList = temp;
+    }
+
+    /**
+     * Get the item view type at a position. Indicated whether or not this is a limit item
+     * @param position
+     * @return
+     */
+    @Override
+    public int getItemViewType(int position) {
+        if (position == dataList.size() - 1 && hitLimit) {
+            return ROLLOVER_ITEM;
+        }
+        return CONTACT_ITEM;
+    }
+
+    /**
+     * Get the datalist.
+     * @return
+     */
+    public List<String> getDataList() {
+        return dataList;
     }
 }

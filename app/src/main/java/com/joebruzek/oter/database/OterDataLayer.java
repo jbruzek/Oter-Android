@@ -507,7 +507,7 @@ public class OterDataLayer {
      */
     private boolean contactRelationExists(long oterId, long contactId) {
         String whereClause = DatabaseContract.ContactRelationContract.KEY_OTER + " = " + oterId +
-                DatabaseContract.ContactRelationContract.KEY_CONTACT + " = " + contactId;
+                " AND " + DatabaseContract.ContactRelationContract.KEY_CONTACT + " = " + contactId;
         String orderBy = DatabaseContract.ContactRelationContract.KEY_CONTACT + " DESC";
         Cursor cursor = database.query(
                 DatabaseContract.ContactRelationContract.TABLE_NAME,

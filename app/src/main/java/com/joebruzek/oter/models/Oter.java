@@ -17,15 +17,6 @@ public class Oter implements Parcelable {
     private int time;
     private Location location;
     private long id;
-
-    public ArrayList<String> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(ArrayList<String> contacts) {
-        this.contacts = contacts;
-    }
-
     private ArrayList<String> contacts;
 
     @Override
@@ -53,6 +44,7 @@ public class Oter implements Parcelable {
         parcel.writeInt(time);
         parcel.writeParcelable(location, flags);
         parcel.writeLong(id);
+        parcel.writeStringList(contacts);
     }
 
     /**
@@ -77,6 +69,7 @@ public class Oter implements Parcelable {
         time = 15;
         message = "";
         location = null;
+        contacts = new ArrayList<String>();
     }
 
     /**
@@ -87,6 +80,7 @@ public class Oter implements Parcelable {
         time = p.readInt();
         location = (Location)p.readParcelable(Location.class.getClassLoader());
         id = p.readLong();
+        contacts = p.createStringArrayList();
     }
 
     /**
@@ -122,6 +116,14 @@ public class Oter implements Parcelable {
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    public ArrayList<String> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(ArrayList<String> contacts) {
+        this.contacts = contacts;
     }
 
 }

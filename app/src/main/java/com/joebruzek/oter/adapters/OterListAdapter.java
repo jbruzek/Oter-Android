@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,6 +38,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
 
     private static final int EMPTY_VIEW_ITEM = 0;
     private static final int OTER_VIEW_ITEM = 1;
+    private static final int CONTACT_LIMIT = 2;
 
     private Cursor cursor;
     private Context context;
@@ -140,12 +142,8 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             holder.text.setText(holder.oter.getMessage());
             holder.time.setText(Strings.buildTimeString(holder.oter.getTime()));
 
-            int limit = 2;
-
             //set the height of the contact list
-            //TODO: implement comments
-            int height = 2;
-            //int height = Math.min(holder.oter.getContacts().size(), limit + 1);
+            int height = Math.min(holder.oter.getContacts().size(), CONTACT_LIMIT + 1);
 
             holder.contactsList.getLayoutParams().height = Measurements.dpToPixel(context, (56 * height));
             holder.contactsList.requestLayout();
@@ -156,9 +154,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             holder.contactsList.setLayoutManager(layoutManager);
             holder.contactsList.setHasFixedSize(true);
 
-            //TODO: implement contacts
-            holder.contactsList.setAdapter(new ContactListAdapter(context, new ArrayList<String>(), limit));
-            //holder.contactsList.setAdapter(new ContactListAdapter(context, holder.oter.getContacts(), limit));
+            holder.contactsList.setAdapter(new ContactListAdapter(context, holder.oter.getContacts(), CONTACT_LIMIT));
 
             if (position == 0) {
                 //TODO: add 6dp to the top padding
