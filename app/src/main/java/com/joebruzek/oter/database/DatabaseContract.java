@@ -22,13 +22,15 @@ public final class DatabaseContract {
     public static final String[] DATABASE_CREATE_TABLES_ARRAY = {
             OtersContract.CREATE_TABLE,
             LocationsContract.CREATE_TABLE,
-            ContactRelationContract.CREATE_TABLE
+            ContactRelationContract.CREATE_TABLE,
+            ContactsContract.CREATE_TABLE
     };
 
     public static final String[] DATABASE_DROP_TABLES_ARRAY = {
             OtersContract.DELETE_TABLE,
             LocationsContract.DELETE_TABLE,
-            ContactRelationContract.DELETE_TABLE
+            ContactRelationContract.DELETE_TABLE,
+            ContactsContract.DELETE_TABLE
     };
 
     // To prevent someone from accidentally instantiating the contract class,
@@ -117,20 +119,25 @@ public final class DatabaseContract {
         private ContactRelationContract() {}
 
         public static final String TABLE_NAME = "ContactRelation";
-        public static final String KEY_ID = "Id";
         public static final String KEY_OTER = "OterID";
         public static final String KEY_CONTACT = "ContactId";
 
         public static final String CREATE_TABLE = "CREATE TABLE " +
                 TABLE_NAME + " (" +
-                KEY_ID + " INTEGER PRIMARY KEY," +
                 KEY_OTER + INTEGER_TYPE + COMMA_SEP +
                 KEY_CONTACT + TEXT_TYPE + COMMA_SEP +
                 "FOREIGN KEY (" + KEY_OTER + ") REFERENCES " +
                 OtersContract.TABLE_NAME + "(" + OtersContract.KEY_ID + ")" +
+                "FOREIGN KEY (" + KEY_CONTACT + ") REFERENCES " +
+                ContactsContract.TABLE_NAME + "(" + ContactsContract.KEY_ID + ")" +
                 " )";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+        public static final String[] ALL_COLUMNS = {
+                KEY_OTER,
+                KEY_CONTACT
+        };
     }
 
     /**
@@ -140,26 +147,25 @@ public final class DatabaseContract {
      * or restoring the information in this database. In that way I can use the reference to get all of the information
      * about the contact, like name, number, picture, etc...
      */
-//    public static abstract class ContactsContract implements BaseColumns {
-//        //Don't allow this class to be instantiated
-//        private ContactsContract() {}
-//
-//        public static final String TABLE_NAME = "Contacts";
-//        public static final String KEY_ID = "Id";
-//        public static final String KEY_NAME = "Name";
-//        public static final String KEY_NUMBER = "Number";
-//        public static final String KEY_OTER = "OterId";
-//
-//        public static final String CREATE_TABLE = "CREATE TABLE " +
-//                TABLE_NAME + " (" +
-//                KEY_ID + " INTEGER PRIMARY KEY," +
-//                KEY_NAME + TEXT_TYPE + COMMA_SEP +
-//                KEY_NUMBER + TEXT_TYPE + COMMA_SEP +
-//                KEY_OTER + INTEGER_TYPE + COMMA_SEP +
-//                "FOREIGNKEY (" + KEY_OTER + ") REFERENCES " +
-//                OtersContract.TABLE_NAME + "(" + OtersContract.KEY_ID + ")" +
-//                " )";
-//
-//        public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
-//    }
+    public static abstract class ContactsContract implements BaseColumns {
+        //Don't allow this class to be instantiated
+        private ContactsContract() {}
+
+        public static final String TABLE_NAME = "Contacts";
+        public static final String KEY_ID = "Id";
+        public static final String KEY_NUMBER = "Number";
+
+        public static final String CREATE_TABLE = "CREATE TABLE " +
+                TABLE_NAME + " (" +
+                KEY_ID + " INTEGER PRIMARY KEY," +
+                KEY_NUMBER + TEXT_TYPE + COMMA_SEP +
+                " )";
+
+        public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+        public static final String[] ALL_COLUMNS = {
+                KEY_ID,
+                KEY_NUMBER
+        };
+    }
 }

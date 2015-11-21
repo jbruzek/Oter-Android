@@ -125,6 +125,9 @@ public class OterDataLayer {
         values.put(DatabaseContract.OtersContract.KEY_TIME, oter.getTime());
         oter.setId(database.insert(DatabaseContract.OtersContract.TABLE_NAME, null, values));
 
+        //insert the contacts now that we have the oter inserted
+        insertAllContacts(oter.getId(), oter.getContacts());
+
         //notify the listeners
         listener.onItemInserted(DatabaseContract.OtersContract.TABLE_NAME, oter.getId());
         return oter.getId();
@@ -155,7 +158,7 @@ public class OterDataLayer {
      * @param l
      * @return the id of the location
      */
-    public long insertLocationIfNotExists(Location l) {
+    private long insertLocationIfNotExists(Location l) {
         Location l2 = getLocationIfExists(l);
         if (l2 == null) {
             return insertLocation(l);
@@ -178,7 +181,7 @@ public class OterDataLayer {
      * @param id
      * @return how many rows were deleted. Should only be one, since we're deleting a specific oter
      */
-    public int removeOter(long id) {
+    private int removeOter(long id) {
         String whereClause = DatabaseContract.OtersContract.KEY_ID + " = ?";
         String[] whereArgs = {String.valueOf(id)};
         int value = database.delete(DatabaseContract.OtersContract.TABLE_NAME,
@@ -342,6 +345,7 @@ public class OterDataLayer {
         oter.setMessage(cursor.getString(cursor.getColumnIndex(DatabaseContract.OtersContract.KEY_MESSAGE)));
         oter.setTime(cursor.getInt(cursor.getColumnIndex(DatabaseContract.OtersContract.KEY_TIME)));
         oter.setLocation(getLocationFromId(cursor.getLong(cursor.getColumnIndex(DatabaseContract.OtersContract.KEY_LOCATION))));
+        oter.setContacts(getContacts(oter.getId()));
         return oter;
     }
 
@@ -397,5 +401,166 @@ public class OterDataLayer {
         }
         cursor.close();
         return oters;
+    }
+
+    /**
+     * Insert a contact into the database. If it already exists, then return the id of the existing one
+     * @param phoneNumber
+     * @return the id (primaryKey) of the inserted number
+     */
+    public long insertContact(String phoneNumber) {
+        long id = getContactIfExists(phoneNumber);
+        if (id == -1) {
+            return insertNewContact(phoneNumber);
+        }
+        return id;
+    }
+
+    /**
+     * Insert a number into the database
+     * @param phoneNumber
+     * @return the id (primaryKey)
+     */
+    private long insertNewContact(String phoneNumber) {
+        ContentValues values = new ContentValues();
+        values.put(DatabaseContract.ContactsContract.KEY_NUMBER, phoneNumber);
+        long id = database.insert(DatabaseContract.ContactsContract.TABLE_NAME, null, values);
+
+        //notify the listeners
+        listener.onItemInserted(DatabaseContract.ContactsContract.TABLE_NAME, id);
+        return id;
+    }
+
+    /**
+     * Check to see if a phone number exists in the database
+     * @param phoneNumber
+     * @return the primarykey of the db column, -1 if the number doesn't exist in the database
+     */
+    private long getContactIfExists(String phoneNumber) {
+        String[] columns = {DatabaseContract.ContactsContract.KEY_ID};
+        String whereClause = DatabaseContract.ContactsContract.KEY_NUMBER + " = ?";
+        String[] whereArgs = {phoneNumber};
+        String orderBy = DatabaseContract.ContactsContract.KEY_ID + " DESC";
+        Cursor cursor = database.query(
+                DatabaseContract.ContactsContract.TABLE_NAME,
+                columns,
+                whereClause,
+                whereArgs,
+                null, null,
+                orderBy,
+                "1");
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return -1;
+        }
+        if (cursor.moveToFirst()) {
+            return cursor.getLong(cursor.getColumnIndex(DatabaseContract.ContactsContract.KEY_ID));
+        }
+        cursor.close();
+        return -1;
+    }
+
+    /**
+     * Insert all of the contacts in a list. Create relations to the oter if they don't already exist
+     * @param oterId
+     * @param phoneNumbers
+     */
+    private void insertAllContacts(long oterId, ArrayList<String> phoneNumbers) {
+        //insert all contacts
+        for (String number : phoneNumbers) {
+            long cid = insertContact(number);
+            insertContactRelation(oterId, cid);
+        }
+    }
+
+    /**
+     * Insert a contact relation depending on whether or not it already exists
+     * @param oterId
+     * @param contactId
+     */
+    private void insertContactRelation(long oterId, long contactId) {
+        if (!contactRelationExists(oterId, contactId)) {
+            insertNewContactRelation(oterId, contactId);
+        }
+    }
+
+    /**
+     * Insert a contact relation to the database
+     * @param oterId
+     * @param contactId
+     */
+    private void insertNewContactRelation(long oterId, long contactId) {
+        ContentValues values = new ContentValues();
+        values.put(DatabaseContract.ContactRelationContract.KEY_OTER, oterId);
+        values.put(DatabaseContract.ContactRelationContract.KEY_CONTACT, contactId);
+        database.insert(DatabaseContract.ContactRelationContract.TABLE_NAME, null, values);
+
+        //notify the listeners
+        listener.onItemInserted(DatabaseContract.ContactRelationContract.TABLE_NAME, 0);
+    }
+
+    /**
+     * Check to see if a contact relation already exists in the database
+     * @param oterId
+     * @param contactId
+     * @return
+     */
+    private boolean contactRelationExists(long oterId, long contactId) {
+        String whereClause = DatabaseContract.ContactRelationContract.KEY_OTER + " = " + oterId +
+                DatabaseContract.ContactRelationContract.KEY_CONTACT + " = " + contactId;
+        String orderBy = DatabaseContract.ContactRelationContract.KEY_CONTACT + " DESC";
+        Cursor cursor = database.query(
+                DatabaseContract.ContactRelationContract.TABLE_NAME,
+                null,
+                whereClause,
+                null, null, null,
+                orderBy,
+                "1");
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
+    /**
+     * Get a list of phone numbers from an oter id
+     * @param oterId
+     * @return
+     */
+    public ArrayList<String> getContacts(long oterId) {
+        return buildContacts(getContactsCursor(oterId));
+    }
+
+    /**
+     * Get a cursor to all of the contacts that are associated with this oter id
+     * @param oterId
+     * @return
+     */
+    private Cursor getContactsCursor(long oterId) {
+        String query = "SELECT * FROM " + DatabaseContract.ContactsContract.TABLE_NAME + " " +
+                "JOIN " + DatabaseContract.ContactRelationContract.TABLE_NAME + " " +
+                "ON " + DatabaseContract.ContactRelationContract.KEY_CONTACT + " " +
+                "= " + DatabaseContract.ContactsContract.KEY_ID + " " +
+                "WHERE " + DatabaseContract.ContactRelationContract.KEY_OTER +  " " +
+                "= ?";
+        String[] args = {String.valueOf(oterId)};
+        return database.rawQuery(query, args);
+    }
+
+    /**
+     * Build a list of numbers from a contact query
+     * @param c
+     * @return
+     */
+    private ArrayList<String> buildContacts(Cursor c) {
+        ArrayList<String> result = new ArrayList<String>();
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            result.add(c.getString(c.getColumnIndex(DatabaseContract.ContactsContract.KEY_NUMBER)));
+            c.moveToNext();
+        }
+        return result;
     }
 }
