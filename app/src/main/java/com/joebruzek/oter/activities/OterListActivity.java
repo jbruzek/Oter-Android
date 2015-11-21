@@ -80,7 +80,6 @@ public class OterListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         adapter = new OterListAdapter(this, dataLayer.getAllOtersCursor());
-        Log.e("DATABASE2", adapter.getItemCount() + "");
         recyclerView.setAdapter(adapter);
 
     }

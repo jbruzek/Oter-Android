@@ -54,7 +54,7 @@ public final class DatabaseContract {
 
         public static final String CREATE_TABLE = "CREATE TABLE " +
                 TABLE_NAME + " (" +
-                KEY_ID + " INTEGER PRIMARY KEY," +
+                KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 KEY_ACTIVE + INTEGER_TYPE + COMMA_SEP +
                 KEY_MESSAGE + TEXT_TYPE + COMMA_SEP +
                 KEY_TIME + INTEGER_TYPE + COMMA_SEP +
