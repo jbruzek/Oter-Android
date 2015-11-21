@@ -157,6 +157,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         for (int i = 0; i < limit + 1; i++) {
             temp.add(dataList.get(i));
         }
+        rollover = dataList.size() - limit;
+        dataList = temp;
     }
 
     /**
