@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
@@ -20,6 +21,7 @@ import java.util.List;
  */
 public class OterDataLayer {
 
+    //large arbitrary oter limit
     private final static int OTER_LIMIT = 10000;
 
     private SQLiteDatabase database;
@@ -188,6 +190,10 @@ public class OterDataLayer {
                 whereClause,
                 whereArgs);
         listener.onItemDeleted(DatabaseContract.OtersContract.TABLE_NAME, id);
+
+        //delete the relations with this oter
+        removeContactRelations(id);
+
         return value;
     }
 
@@ -212,6 +218,9 @@ public class OterDataLayer {
                 values,
                 selection,
                 selectionArgs);
+
+        //update the contact relations of this oter
+        updateContactRelations(oter);
 
         //update the listeners
         listener.onItemUpdated(DatabaseContract.OtersContract.TABLE_NAME, oter.getId());
@@ -522,6 +531,31 @@ public class OterDataLayer {
         }
         cursor.close();
         return true;
+    }
+
+    /**
+     * Delete all of the contact relations that are related to this oter
+     * @param oterId
+     */
+    private void removeContactRelations(long oterId) {
+        String query = "DELETE FROM " + DatabaseContract.ContactRelationContract.TABLE_NAME +
+                " WHERE " + DatabaseContract.ContactRelationContract.KEY_OTER + "=?";
+        String[] whereArgs = {String.valueOf(oterId)};
+        database.rawQuery(query, whereArgs);
+        listener.onItemDeleted(DatabaseContract.ContactRelationContract.TABLE_NAME, 0);
+    }
+
+    /**
+     * Update the contact relations for this oter
+     * Since we're not expecting an oter to have more than a handful of contacts at a time
+     * (certainly not hundreds or thousands) it is acceptable to simply remove and reinsert contactRelations
+     *
+     * @param oter
+     */
+    private void updateContactRelations(Oter oter) {
+        removeContactRelations(oter.getId());
+        insertAllContacts(oter.getId(), oter.getContacts());
+        listener.onItemUpdated(DatabaseContract.ContactRelationContract.TABLE_NAME, 0);
     }
 
     /**
