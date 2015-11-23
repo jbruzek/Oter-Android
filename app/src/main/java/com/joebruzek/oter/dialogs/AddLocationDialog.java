@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -104,6 +105,20 @@ public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCa
                 search.clearFocus();
             }
         });
+        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    sendSearch();
+                    search.clearFocus();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
+        search.setImeActionLabel("Custom text", KeyEvent.KEYCODE_ENTER);
 
         //TestData
         ArrayList<Location> testLocations = new ArrayList<Location>();
@@ -120,8 +135,6 @@ public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCa
         recyclerView.setHasFixedSize(true);
         LocationListAdapter adapter = new LocationListAdapter(getActivity(), testLocations);
         recyclerView.setAdapter(adapter);
-
-        //new HttpTask(this).execute(Strings.buildGooglePlacesQuery(getActivity(), "pizza"));
 
         // Create the AlertDialog object and return it
         return builder.create();

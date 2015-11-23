@@ -46,10 +46,11 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     /**
      * ViewHolders populate the RecyclerView. Each item in the list is contained in a VewHolder.
      */
-    public class ViewHolder extends RecyclerView.ViewHolder implements DialogInterface.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         View parent;
         TextView name;
         TextView address;
+        int position;
 
         /**
          * Create the viewholder for the item
@@ -61,13 +62,6 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
             name = (TextView) itemView.findViewById(R.id.add_location_item_name);
             address = (TextView) itemView.findViewById(R.id.add_location_item_subtitle);
-        }
-
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-            ArrayList<Location> temp = new ArrayList<Location>();
-            temp.add(dataList.get(i));
-            setDataSet(temp);
         }
     }
 
@@ -95,10 +89,19 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
      * @param position
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         if (getItemViewType(position) == LOCATION_ITEM) {
             holder.name.setText(dataList.get(position).getName());
             holder.address.setText(dataList.get(position).getAddress());
+            holder.position = position;
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ArrayList<Location> temp = new ArrayList<Location>();
+                    temp.add(dataList.get(position));
+                    setDataSet(temp);
+                }
+            });
         }
     }
 
