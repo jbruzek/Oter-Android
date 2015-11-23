@@ -1,5 +1,9 @@
 package com.joebruzek.oter.utilities;
 
+import android.content.Context;
+
+import com.joebruzek.oter.R;
+
 /**
  * Strings provides helper methods for formatting strings
  *
@@ -12,9 +16,19 @@ public class Strings {
      * @param location the search query (or location name)
      * @return a formatted query, i.e. https://maps.googleapis.com/maps/api/place/textsearch/json?query=manhattan&key=AIzaSyCCpWXxqSycqLzMGvkEDiGNbIaq0FNOhH8
      */
-    public static String buildGooglePlacesQuery(String location) {
+    public static String buildGooglePlacesQuery(Context c, String location) {
+        return "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + buildAPIFormattedString(location) + "&key=" + c.getResources().getString(R.string.google_places_api_key);
         //TODO: implement
-        return "";
+//        return "";
+    }
+
+    /**
+     * Change a string from "Burger King" to "Burger+King"
+     * @param s
+     * @return
+     */
+    private static String buildAPIFormattedString(String s) {
+        return s.trim().replaceAll(" ", "+");
     }
 
     /**

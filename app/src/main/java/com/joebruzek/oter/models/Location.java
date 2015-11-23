@@ -3,6 +3,13 @@ package com.joebruzek.oter.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Oter location.
  *
@@ -10,14 +17,36 @@ import android.os.Parcelable;
  */
 public class Location implements Parcelable {
 
+    /**
+     * Static method to take a JSONObject from a Google places search and turns it into a location list
+     * @param json
+     * @return
+     */
+    public static List<Location> getLocationsFromJSON(JSONObject json) {
+        List<Location> locations = new ArrayList<Location>();
+        try {
+            JSONArray results = json.getJSONArray("results");
+            for (int i = 0; i < results.length(); i++) {
+                Location l = new Location();
+                l.setName(results.getJSONObject(i).getString("name"));
+                l.setAddress(results.getJSONObject(i).getString("formatted_address"));
+                locations.add(l);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return locations;
+    }
+
     private String name;
+    private String address;
     private double latitude;
     private double longitude;
     private long id;
 
     @Override
     public String toString() {
-        return "LOCATION:\nid: " + id + "\nname: " + name + "\nlon: " + longitude + "\nlat: " + latitude;
+        return "LOCATION:\nid: " + id + "\nname: " + name + "\naddress: " + address + "\nlon: " + longitude + "\nlat: " + latitude;
     }
 
     /**
@@ -37,6 +66,7 @@ public class Location implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
+        parcel.writeString(address);
         double[] coordinates = new double[]{longitude, latitude};
         parcel.writeDoubleArray(coordinates);
         parcel.writeLong(id);
@@ -70,6 +100,7 @@ public class Location implements Parcelable {
      */
     public Location(Parcel p) {
         name = p.readString();
+        address = p.readString();
         double[] coordinates = new double[2];
         p.readDoubleArray(coordinates);
         longitude = coordinates[0];
@@ -110,5 +141,13 @@ public class Location implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

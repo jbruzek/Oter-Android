@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.joebruzek.oter.models.Location;
@@ -146,6 +147,7 @@ public class OterDataLayer {
     public long insertLocation(Location l) {
         ContentValues values = new ContentValues();
         values.put(DatabaseContract.LocationsContract.KEY_NAME, l.getName());
+        values.put(DatabaseContract.LocationsContract.KEY_ADDRESS, l.getAddress());
         values.put(DatabaseContract.LocationsContract.KEY_LONGITUDE, l.getLongitude());
         values.put(DatabaseContract.LocationsContract.KEY_LATITUDE, l.getLatitude());
         l.setId(database.insert(DatabaseContract.LocationsContract.TABLE_NAME, null, values));
@@ -286,9 +288,10 @@ public class OterDataLayer {
      */
     public Location getLocationIfExists(Location l) {
         String whereClause = DatabaseContract.LocationsContract.KEY_NAME + " = ? AND " +
+            DatabaseContract.LocationsContract.KEY_ADDRESS + " = ? AND " +
             DatabaseContract.LocationsContract.KEY_LONGITUDE + " = " + l.getLongitude() + " AND " +
             DatabaseContract.LocationsContract.KEY_LATITUDE + " = " + l.getLatitude();
-        String[] whereArgs = new String[] {l.getName()};
+        String[] whereArgs = new String[] {l.getName(), l.getAddress()};
         String orderBy = DatabaseContract.OtersContract.KEY_ID + " DESC";
         Cursor cursor = database.query(
                 DatabaseContract.LocationsContract.TABLE_NAME,
@@ -371,6 +374,7 @@ public class OterDataLayer {
         Location l = new Location();
         l.setId(cursor.getLong(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_ID)));
         l.setName(cursor.getString(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_NAME)));
+        l.setAddress(cursor.getString(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_ADDRESS)));
         l.setLatitude(cursor.getDouble(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_LATITUDE)));
         l.setLongitude(cursor.getDouble(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_LONGITUDE)));
         return l;

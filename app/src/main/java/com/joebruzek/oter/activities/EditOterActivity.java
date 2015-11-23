@@ -179,6 +179,7 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         //TODO: implement addLocationDialog
         Location l = new Location();
         l.setName("New oter location");
+        l.setAddress("1234 Oter Lane");
         oter.setLocation(l);
         //end todo
 

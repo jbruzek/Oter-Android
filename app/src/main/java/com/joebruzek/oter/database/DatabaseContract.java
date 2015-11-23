@@ -84,6 +84,7 @@ public final class DatabaseContract {
         public static final String TABLE_NAME = "Locations";
         public static final String KEY_ID = "Id";
         public static final String KEY_NAME = "Name";
+        public static final String KEY_ADDRESS = "Address";
         public static final String KEY_LATITUDE = "Latitude";
         public static final String KEY_LONGITUDE = "Longitude";
 
@@ -91,6 +92,7 @@ public final class DatabaseContract {
                 TABLE_NAME + " (" +
                 KEY_ID + " INTEGER PRIMARY KEY," +
                 KEY_NAME + TEXT_TYPE + COMMA_SEP +
+                KEY_ADDRESS + TEXT_TYPE + COMMA_SEP +
                 KEY_LATITUDE + REAL_TYPE + COMMA_SEP +
                 KEY_LONGITUDE + REAL_TYPE +
                 " )";
@@ -100,6 +102,7 @@ public final class DatabaseContract {
         public static final String[] ALL_COLUMNS = {
                 KEY_ID,
                 KEY_NAME,
+                KEY_ADDRESS,
                 KEY_LONGITUDE,
                 KEY_LATITUDE
         };

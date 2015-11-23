@@ -4,18 +4,30 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.adapters.LocationListAdapter;
 import com.joebruzek.oter.adapters.OterListAdapter;
+import com.joebruzek.oter.models.Location;
+import com.joebruzek.oter.utilities.HttpTask;
+import com.joebruzek.oter.utilities.Strings;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -26,7 +38,7 @@ import java.util.ArrayList;
  *
  * Created by jbruzek on 11/13/15.
  */
-public class AddLocationDialog extends DialogFragment {
+public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCaller {
 
     /**
      * Interface for sending information back to the calling activity
@@ -38,9 +50,11 @@ public class AddLocationDialog extends DialogFragment {
     }
 
     private AddLocationDialogListener listener;
+    private EditText search;
     private Button positive;
     private Button negative;
     private RecyclerView recyclerView;
+    private ImageButton searchButton;
 
     @Override
     public void onAttach(Activity activity) {
@@ -64,9 +78,11 @@ public class AddLocationDialog extends DialogFragment {
         View v = inflater.inflate(R.layout.dialog_add_location, null);
         builder.setView(v);
 
-        positive = (Button) v.findViewById(R.id.set_time_positive_button);
-        negative = (Button) v.findViewById(R.id.set_time_negative_button);
+        search = (EditText) v.findViewById(R.id.dialog_add_location_search);
+        positive = (Button) v.findViewById(R.id.dialog_add_location_positive_button);
+        negative = (Button) v.findViewById(R.id.dialog_add_location_negative_button);
         recyclerView = (RecyclerView) v.findViewById(R.id.dialog_add_location_recycler_view);
+        searchButton = (ImageButton) v.findViewById(R.id.dialog_add_location_search_button);
 
         final AddLocationDialog dis = this;
         positive.setOnClickListener(new View.OnClickListener() {
@@ -81,11 +97,21 @@ public class AddLocationDialog extends DialogFragment {
                 listener.onAddLocationNegativeClick(dis);
             }
         });
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendSearch();
+                search.clearFocus();
+            }
+        });
 
         //TestData
-        ArrayList<String> testLocations = new ArrayList<String>();
-        for (int i = 0; i < 20; i++) {
-            testLocations.add("Location " + i);
+        ArrayList<Location> testLocations = new ArrayList<Location>();
+        for (int i = 0; i < 0; i++) {
+            Location l = new Location();
+            l.setName("Location " + i);
+            l.setAddress("Address " + i);
+            testLocations.add(l);
         }
         //end TestData
 
@@ -95,7 +121,39 @@ public class AddLocationDialog extends DialogFragment {
         LocationListAdapter adapter = new LocationListAdapter(getActivity(), testLocations);
         recyclerView.setAdapter(adapter);
 
+        //new HttpTask(this).execute(Strings.buildGooglePlacesQuery(getActivity(), "pizza"));
+
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    /**
+     * search something
+     */
+    private void sendSearch() {
+        ((LocationListAdapter)recyclerView.getAdapter()).setLoading();
+
+        //hide the keyboard
+        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(search.getWindowToken(), 0);
+
+        //send the search
+        new HttpTask(this).execute(Strings.buildGooglePlacesQuery(getActivity(), search.getText().toString()));
+    }
+
+    /**
+     * HttpTask has returned a JSONObject with information about locations
+     * @param result
+     */
+    @Override
+    public void processResults(JSONObject result) {
+        //no results
+        if (result == null) {
+            //I'll get to this later I guess
+            return;
+        }
+
+        Log.e("TASK", result.toString());
+        ((LocationListAdapter)recyclerView.getAdapter()).setDataSet(Location.getLocationsFromJSON(result));
     }
 }

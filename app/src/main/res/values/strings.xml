@@ -24,4 +24,6 @@
 
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
+
+    <string name="google_places_api_key">AIzaSyCCpWXxqSycqLzMGvkEDiGNbIaq0FNOhH8</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.joebruzek.oter.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.joebruzek.oter.R;
+import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.views.ContactIcon;
 
 import java.util.ArrayList;
@@ -22,29 +24,32 @@ import java.util.List;
  */
 public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapter.ViewHolder> {
 
-    private List<String> dataList;
+    private static final int LOADING_ITEM = 0;
+    private static final int LOCATION_ITEM = 1;
+    private List<Location> dataList;
     private Context context;
+    private boolean isLoading = false;
 
     /**
      * constructor
      * @param c
      * @param list
      */
-    public LocationListAdapter(Context c, List<String> list) {
+    public LocationListAdapter(Context c, List<Location> list) {
         context = c;
 
         //deep copy
-        dataList = new ArrayList<String>();
+        dataList = new ArrayList<Location>();
         dataList.addAll(list);
     }
 
     /**
      * ViewHolders populate the RecyclerView. Each item in the list is contained in a VewHolder.
      */
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements DialogInterface.OnClickListener {
         View parent;
         TextView name;
-        RadioButton button;
+        TextView address;
 
         /**
          * Create the viewholder for the item
@@ -55,7 +60,14 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             this.parent = itemView;
 
             name = (TextView) itemView.findViewById(R.id.add_location_item_name);
-            button = (RadioButton) itemView.findViewById(R.id.add_location_item_button);
+            address = (TextView) itemView.findViewById(R.id.add_location_item_subtitle);
+        }
+
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            ArrayList<Location> temp = new ArrayList<Location>();
+            temp.add(dataList.get(i));
+            setDataSet(temp);
         }
     }
 
@@ -68,8 +80,11 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View view;
-        Log.d("Inflating", dataList.size() + "");
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.add_location_list_item, parent, false);
+        if (getItemViewType(i) == LOADING_ITEM) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_list_item, parent, false);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.add_location_list_item, parent, false);
+        }
         ViewHolder vh = new ViewHolder(view);
         return vh;
     }
@@ -81,7 +96,24 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.name.setText(dataList.get(position));
+        if (getItemViewType(position) == LOCATION_ITEM) {
+            holder.name.setText(dataList.get(position).getName());
+            holder.address.setText(dataList.get(position).getAddress());
+        }
+    }
+
+    /**
+     * Get what type of view this is
+     * @param position
+     * @return
+     */
+    @Override
+    public int getItemViewType(int position) {
+        if (isLoading && position == 0) {
+            return LOADING_ITEM;
+        } else {
+            return LOCATION_ITEM;
+        }
     }
 
     /**
@@ -91,5 +123,26 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     @Override
     public int getItemCount() {
         return dataList.size();
+    }
+
+    /**
+     * Change the data list
+     * @param list
+     */
+    public void setDataSet(List<Location> list) {
+        isLoading = false;
+        this.dataList = list;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Set the adapter to a "loading" state
+     */
+    public void setLoading() {
+        isLoading = true;
+        ArrayList<Location> temp = new ArrayList<Location>();
+        temp.add(new Location());
+        this.dataList = temp;
+        notifyDataSetChanged();
     }
 }
