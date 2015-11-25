@@ -30,6 +30,9 @@ public class Location implements Parcelable {
                 Location l = new Location();
                 l.setName(results.getJSONObject(i).getString("name"));
                 l.setAddress(results.getJSONObject(i).getString("formatted_address"));
+                JSONObject locationJSON = results.getJSONObject(i).getJSONObject("geometry").getJSONObject("location");
+                l.setLatitude(locationJSON.getDouble("lat"));
+                l.setLongitude(locationJSON.getDouble("lng"));
                 locations.add(l);
             }
         } catch (JSONException e) {
@@ -40,13 +43,14 @@ public class Location implements Parcelable {
 
     private String name;
     private String address;
+    private String nickname;
     private double latitude;
     private double longitude;
     private long id;
 
     @Override
     public String toString() {
-        return "LOCATION:\nid: " + id + "\nname: " + name + "\naddress: " + address + "\nlon: " + longitude + "\nlat: " + latitude;
+        return "LOCATION:\nid: " + id + "\nname: " + name + "\nnickname: " + nickname + "\naddress: " + address + "\nlon: " + longitude + "\nlat: " + latitude;
     }
 
     /**
@@ -67,6 +71,7 @@ public class Location implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
         parcel.writeString(address);
+        parcel.writeString(nickname);
         double[] coordinates = new double[]{longitude, latitude};
         parcel.writeDoubleArray(coordinates);
         parcel.writeLong(id);
@@ -93,6 +98,7 @@ public class Location implements Parcelable {
         //default values
         latitude = 0.0;
         longitude = 0.0;
+        nickname = "";
     }
 
     /**
@@ -101,11 +107,23 @@ public class Location implements Parcelable {
     public Location(Parcel p) {
         name = p.readString();
         address = p.readString();
+        nickname = p.readString();
         double[] coordinates = new double[2];
         p.readDoubleArray(coordinates);
         longitude = coordinates[0];
         latitude = coordinates[1];
         id = p.readLong();
+    }
+
+    /**
+     * Get the preferred name for this location. This is either the nickname or the formal name if the nickname doesn't exist.
+     * @return
+     */
+    public String getPreferredName() {
+        if (!nickname.equals("")) {
+            return nickname;
+        }
+        return name;
     }
 
     /**
@@ -149,5 +167,13 @@ public class Location implements Parcelable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

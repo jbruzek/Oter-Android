@@ -138,7 +138,7 @@ public class OterListAdapter extends RecyclerView.Adapter<OterListAdapter.ViewHo
             }
 
             holder.oter = dataLayer.buildOter(cursor);
-            holder.location.setText(holder.oter.getLocation().getName());
+            holder.location.setText(holder.oter.getLocation().getPreferredName());
             holder.text.setText(holder.oter.getMessage());
             holder.time.setText(Strings.buildTimeString(holder.oter.getTime()));
 

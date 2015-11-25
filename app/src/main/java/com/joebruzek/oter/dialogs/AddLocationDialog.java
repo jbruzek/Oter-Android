@@ -56,6 +56,8 @@ public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCa
     private Button negative;
     private RecyclerView recyclerView;
     private ImageButton searchButton;
+    private Location location;
+    LocationListAdapter adapter;
 
     @Override
     public void onAttach(Activity activity) {
@@ -73,6 +75,9 @@ public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCa
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        //get the location from the bundle
+        location = getArguments().getParcelable("location");
+
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -118,8 +123,6 @@ public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCa
             }
         });
 
-        search.setImeActionLabel("Custom text", KeyEvent.KEYCODE_ENTER);
-
         //TestData
         ArrayList<Location> testLocations = new ArrayList<Location>();
         for (int i = 0; i < 0; i++) {
@@ -133,7 +136,11 @@ public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCa
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        LocationListAdapter adapter = new LocationListAdapter(getActivity(), testLocations);
+        if (location == null) {
+            adapter = new LocationListAdapter(getActivity(), new ArrayList<Location>());
+        } else {
+            adapter = new LocationListAdapter(getActivity(), location);
+        }
         recyclerView.setAdapter(adapter);
 
         // Create the AlertDialog object and return it
@@ -166,7 +173,15 @@ public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCa
             return;
         }
 
-        Log.e("TASK", result.toString());
         ((LocationListAdapter)recyclerView.getAdapter()).setDataSet(Location.getLocationsFromJSON(result));
+    }
+
+    /**
+     * Get the selected location from the adapter
+     * @return
+     */
+    public Location getLocation() {
+        Location l = adapter.getSelectedLocation();
+        return l;
     }
 }

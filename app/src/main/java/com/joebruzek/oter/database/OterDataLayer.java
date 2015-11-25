@@ -147,6 +147,7 @@ public class OterDataLayer {
     public long insertLocation(Location l) {
         ContentValues values = new ContentValues();
         values.put(DatabaseContract.LocationsContract.KEY_NAME, l.getName());
+        values.put(DatabaseContract.LocationsContract.KEY_NICKNAME, l.getNickname());
         values.put(DatabaseContract.LocationsContract.KEY_ADDRESS, l.getAddress());
         values.put(DatabaseContract.LocationsContract.KEY_LONGITUDE, l.getLongitude());
         values.put(DatabaseContract.LocationsContract.KEY_LATITUDE, l.getLatitude());
@@ -288,6 +289,7 @@ public class OterDataLayer {
      */
     public Location getLocationIfExists(Location l) {
         String whereClause = DatabaseContract.LocationsContract.KEY_NAME + " = ? AND " +
+            DatabaseContract.LocationsContract.KEY_NICKNAME + " = ? AND " +
             DatabaseContract.LocationsContract.KEY_ADDRESS + " = ? AND " +
             DatabaseContract.LocationsContract.KEY_LONGITUDE + " = " + l.getLongitude() + " AND " +
             DatabaseContract.LocationsContract.KEY_LATITUDE + " = " + l.getLatitude();
@@ -374,6 +376,7 @@ public class OterDataLayer {
         Location l = new Location();
         l.setId(cursor.getLong(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_ID)));
         l.setName(cursor.getString(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_NAME)));
+        l.setNickname(cursor.getString(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_NICKNAME)));
         l.setAddress(cursor.getString(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_ADDRESS)));
         l.setLatitude(cursor.getDouble(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_LATITUDE)));
         l.setLongitude(cursor.getDouble(cursor.getColumnIndex(DatabaseContract.LocationsContract.KEY_LONGITUDE)));

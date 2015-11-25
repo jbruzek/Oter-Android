@@ -144,6 +144,12 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
             @Override
             public void onClick(View view) {
                 DialogFragment newFragment = new AddLocationDialog();
+
+                //pass the current location to the dialog
+                Bundle b = new Bundle();
+                b.putParcelable("location", oter.getLocation());
+                newFragment.setArguments(b);
+
                 newFragment.show(getFragmentManager(), "addLocation");
             }
         });
@@ -175,13 +181,6 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         //TODO: Add a LOT of invalid data checks so we don't screw up the database
 
         oter.setMessage(editMessage.getText().toString());
-
-        //TODO: implement addLocationDialog
-        Location l = new Location();
-        l.setName("New oter location");
-        l.setAddress("1234 Oter Lane");
-        oter.setLocation(l);
-        //end todo
 
         if (newOter) {
             dataLayer.insertOter(oter);
@@ -238,7 +237,7 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         if (oter.getLocation() == null) {
             timeText.setText(Strings.buildTimeString(oter.getTime()));
         } else {
-            timeText.setText(Strings.buildTimeString(oter.getTime(), oter.getLocation().getName()));
+            timeText.setText(Strings.buildTimeString(oter.getTime(), oter.getLocation().getPreferredName()));
         }
     }
 
@@ -300,7 +299,13 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
      */
     @Override
     public void onAddLocationPositiveClick(AddLocationDialog l) {
-
+        if (l.getLocation() == null) {
+            l.dismiss();
+            return;
+        }
+        oter.setLocation(l.getLocation());
+        setTimeText();
+        l.dismiss();
     }
 
     /**

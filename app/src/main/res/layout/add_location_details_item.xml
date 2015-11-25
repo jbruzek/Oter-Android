@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:textSize="16dp"
+        android:textColor="@android:color/black"
+        android:text="@string/set_nickname"/>
+
+    <EditText
+        android:id="@+id/add_location_detail_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="text"
+        android:imeOptions="actionGo"
+        android:hint="@string/add_location_detail_hint"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/secondary_text_dark"
+        android:backgroundTint="@color/accent"/>
+
+</LinearLayout>

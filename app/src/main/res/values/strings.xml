@@ -22,6 +22,9 @@
     <string name="test_text">\"I\'ll be there soon!\"</string>
     <string name="test_time">15 minutes away</string>
 
+    <string name="add_location_detail_hint">Nickname</string>
+    <string name="set_nickname">Give this location a nickname</string>
+
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
 
