@@ -25,6 +25,8 @@
     <string name="add_location_detail_hint">Nickname</string>
     <string name="set_nickname">Give this location a nickname</string>
 
+    <string name="location_error">Select a location</string>
+
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
 

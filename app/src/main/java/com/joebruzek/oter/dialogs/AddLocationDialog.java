@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.joebruzek.oter.R;
 import com.joebruzek.oter.adapters.LocationListAdapter;
@@ -94,7 +95,11 @@ public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCa
         positive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onAddLocationPositiveClick(dis);
+                if (adapter.getSelectedLocation() == null) {
+                    Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.location_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    listener.onAddLocationPositiveClick(dis);
+                }
             }
         });
         negative.setOnClickListener(new View.OnClickListener() {
@@ -122,16 +127,6 @@ public class AddLocationDialog extends DialogFragment implements HttpTask.HttpCa
                 return handled;
             }
         });
-
-        //TestData
-        ArrayList<Location> testLocations = new ArrayList<Location>();
-        for (int i = 0; i < 0; i++) {
-            Location l = new Location();
-            l.setName("Location " + i);
-            l.setAddress("Address " + i);
-            testLocations.add(l);
-        }
-        //end TestData
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);

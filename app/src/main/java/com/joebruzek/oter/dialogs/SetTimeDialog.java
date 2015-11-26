@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -61,6 +64,7 @@ public class SetTimeDialog extends DialogFragment {
         positive = (Button) v.findViewById(R.id.set_time_positive_button);
         negative = (Button) v.findViewById(R.id.set_time_negative_button);
         picker = (EditText) v.findViewById(R.id.set_time_picker);
+
 
         final SetTimeDialog dis = this;
         positive.setOnClickListener(new View.OnClickListener() {
