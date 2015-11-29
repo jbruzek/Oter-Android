@@ -545,11 +545,12 @@ public class OterDataLayer {
      * @param oterId
      */
     private void removeContactRelations(long oterId) {
-        String query = "DELETE FROM " + DatabaseContract.ContactRelationContract.TABLE_NAME +
-                " WHERE " + DatabaseContract.ContactRelationContract.KEY_OTER + "=?";
+        String whereClause = DatabaseContract.ContactRelationContract.KEY_OTER + " = ?";
         String[] whereArgs = {String.valueOf(oterId)};
-        database.rawQuery(query, whereArgs);
-        listener.onItemDeleted(DatabaseContract.ContactRelationContract.TABLE_NAME, 0);
+        int value = database.delete(DatabaseContract.ContactRelationContract.TABLE_NAME,
+                whereClause,
+                whereArgs);
+        listener.onItemDeleted(DatabaseContract.ContactRelationContract.TABLE_NAME, value);
     }
 
     /**

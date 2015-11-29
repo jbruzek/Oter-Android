@@ -97,4 +97,14 @@ public class Contacts {
         }
         return null;
     }
+
+    /**
+     * Format a number to just just numbers
+     *
+     * @param number (999) 999-9999
+     * @return 9999999999
+     */
+    public static String formatNumber(String number) {
+        return number.replaceAll("[^0-9]","");
+    }
 }

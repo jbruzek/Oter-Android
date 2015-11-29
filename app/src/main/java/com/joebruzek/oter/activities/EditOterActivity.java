@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -53,6 +54,7 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
     private Button deleteButton;
     private boolean newOter = true;
     private OterDataLayer dataLayer;
+    private ContactListAdapter adapter;
 
     public EditOterActivity() {
     }
@@ -90,7 +92,7 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        ContactListAdapter adapter = new ContactListAdapter(this, oter.getContacts(), true);
+        adapter = new ContactListAdapter(this, oter.getContacts(), true);
         recyclerView.setAdapter(adapter);
 
         dataLayer = new OterDataLayer(this);
@@ -178,7 +180,17 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
      * When the schedule button is clicked. Either add an oter to the database or update an oter in the database
      */
     private void scheduleButtonClicked() {
-        //TODO: Add a LOT of invalid data checks so we don't screw up the database
+
+        oter.setContacts(adapter.getDataList());
+
+        if (oter.getLocation() == null) {
+            Toast.makeText(this, getResources().getString(R.string.location_error), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (oter.getContacts().size() == 0) {
+            Toast.makeText(this, getResources().getString(R.string.contact_error), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         oter.setMessage(editMessage.getText().toString());
 
@@ -267,9 +279,9 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
     private void handleContactSelected(Uri result)
     {
         Contact c = Contacts.getContact(this, result);
-        oter.getContacts().add(c.getNumber());
+        oter.getContacts().add(Contacts.formatNumber(c.getNumber()));
 
-        ((ContactListAdapter)recyclerView.getAdapter()).getDataList().add(c.getNumber());
+        ((ContactListAdapter)recyclerView.getAdapter()).getDataList().add(Contacts.formatNumber(c.getNumber()));
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 

@@ -26,6 +26,7 @@
     <string name="set_nickname">Give this location a nickname</string>
 
     <string name="location_error">Select a location</string>
+    <string name="contact_error">Select at least one contact</string>
 
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>

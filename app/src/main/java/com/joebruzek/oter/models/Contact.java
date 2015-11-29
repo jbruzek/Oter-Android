@@ -2,6 +2,8 @@ package com.joebruzek.oter.models;
 
 import android.graphics.Bitmap;
 
+import com.joebruzek.oter.utilities.Contacts;
+
 /**
  * Created by jbruzek on 11/20/15.
  */
@@ -35,7 +37,7 @@ public class Contact {
     }
 
     public void setNumber(String number) {
-        this.number = number;
+        this.number = Contacts.formatNumber(number);
     }
 
     public String getName() {

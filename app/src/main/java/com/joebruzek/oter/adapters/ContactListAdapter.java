@@ -78,6 +78,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
         /**
          * Create the viewholder for the item
+         *
          * @param itemView the view contained in the viewHolder
          */
         public ViewHolder(View itemView) {
@@ -91,7 +92,9 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    dataList.remove(contact.getNumber());
+                    int j = dataList.indexOf(Contacts.formatNumber(contact.getNumber()));
+                    dataList.remove(Contacts.formatNumber(contact.getNumber()));
+                    notifyItemRemoved(j);
                     notifyDataSetChanged();
                 }
             });
@@ -178,7 +181,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
      * Get the datalist.
      * @return
      */
-    public List<String> getDataList() {
-        return dataList;
+    public ArrayList<String> getDataList() {
+        return (ArrayList)dataList;
     }
 }

@@ -50,32 +50,6 @@ public class OterListActivity extends AppCompatActivity {
         dataLayer = new OterDataLayer(this);
         dataLayer.openDB();
 
-        //test data
-        ArrayList<Oter> testOters = new ArrayList<Oter>();
-        String[] messages = {"I'll be there soon!", "Almost home.", "15 minutes out", "see you soon", "lol omg lmfao"};
-        String[] locations = {"Mom's House", "Surge", "Florida", "The moon", "Mr. Choo's"};
-        for (int i = 0; i < 5; i++) {
-            Oter o = new Oter();
-            Location l = new Location();
-            l.setName(locations[i]);
-            l.setLatitude(i + 0.123);
-            l.setLongitude(i + 0.456);
-            o.setLocation(l);
-            ArrayList<String> contacts = new ArrayList<String>();
-            contacts.add("Joe Bruzek");
-            contacts.add("Yash Pant");
-            contacts.add("Mark Olsen");
-            contacts.add("Alexia Lutz");
-            for (int j = 0; j < i; j++) {
-                contacts.add("temp");
-            }
-            o.setContacts(contacts);
-            o.setMessage("\"" + messages[i] + "\"");
-            o.setTime(15);
-            testOters.add(o);
-//            dataLayer.insertOter(o);
-        }
-
         recyclerView = (RecyclerView)findViewById(R.id.oter_list_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);

@@ -21,7 +21,11 @@ public class Oter implements Parcelable {
 
     @Override
     public String toString() {
-        return "OTER:\nid: " + id + "\nmessage: " + message + "\ntime: " + time + "\nlocation: " + location;
+        String c = "";
+        for (String s : contacts) {
+            c = c + s + "\n";
+        }
+        return "OTER:\nid: " + id + "\nmessage: " + message + "\ntime: " + time + "\nlocation: " + location + "\ncontacts: " + c;
     }
 
     /**
