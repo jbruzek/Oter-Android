@@ -1,10 +1,16 @@
 package com.joebruzek.oter.services;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
+import android.util.Log;
+
 import com.joebruzek.oter.database.OterDataLayer;
+import com.joebruzek.oter.utilities.AlarmScheduler;
 import com.joebruzek.oter.utilities.HttpTask;
 import com.joebruzek.oter.utilities.OterWaitingTask;
 import org.json.JSONObject;
@@ -37,6 +43,11 @@ public class SendOterService extends Service {
             sender = new OterSender();
         }
 
+        Log.e("SERVICE", "Logging from service");
+
+        int[] ids = {1, 2, 3};
+        AlarmScheduler.scheduleWakeUp(this, ids);
+
         // Return START_STICKY so that the system will restart
         // the service if it gets killed for some reason
         return Service.START_STICKY;
@@ -55,8 +66,7 @@ public class SendOterService extends Service {
         /**
          * Constructor
          */
-        public void OterSender() {
-
+        public OterSender() {
         }
 
         /**
@@ -76,7 +86,6 @@ public class SendOterService extends Service {
          */
         @Override
         public void onWaitingTaskCompleted(Integer[] oters) {
-
         }
     }
 }

@@ -15,6 +15,7 @@ import com.joebruzek.oter.adapters.OterListAdapter;
 import com.joebruzek.oter.database.OterDataLayer;
 import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
+import com.joebruzek.oter.services.SendOterService;
 
 import java.util.ArrayList;
 
@@ -81,6 +82,8 @@ public class OterListActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         adapter = new OterListAdapter(this, dataLayer.getAllOtersCursor());
         recyclerView.setAdapter(adapter);
+
+        //startService(new Intent(this, SendOterService.class));
 
     }
 

@@ -22,6 +22,7 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <service android:name=".services.SendOterService" />
+        <receiver android:name=".utilities.AlarmReceiver"/>
     </application>
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />

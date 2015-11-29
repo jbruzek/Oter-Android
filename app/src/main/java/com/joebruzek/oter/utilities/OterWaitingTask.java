@@ -1,6 +1,7 @@
 package com.joebruzek.oter.utilities;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 /**
  * OterWaitingTask is kinda lame, but it takes a list of Oter ids and waits for a set period of
@@ -18,7 +19,7 @@ public class OterWaitingTask extends AsyncTask<Void, Integer, Integer[]> {
     }
 
     //task waiting time in milliseconds - 5 minutes
-    private final int TASK_WAITING_TIME = 300000;
+    private final int TASK_WAITING_TIME = 10000;
 
     private Integer[] oters;
     private OterWaitingTaskListener listener;
@@ -39,6 +40,7 @@ public class OterWaitingTask extends AsyncTask<Void, Integer, Integer[]> {
      */
     @Override
     protected Integer[] doInBackground(Void... voids) {
+        Log.e("WAITING TASK", "executing");
         for (int i = 0; i < 100; i++) {
             try {
                 Thread.sleep(TASK_WAITING_TIME / 100);
