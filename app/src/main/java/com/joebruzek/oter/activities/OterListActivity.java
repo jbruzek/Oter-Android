@@ -56,9 +56,6 @@ public class OterListActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         adapter = new OterListAdapter(this, dataLayer.getAllOtersCursor());
         recyclerView.setAdapter(adapter);
-
-        //startService(new Intent(this, SendOterService.class));
-
     }
 
 

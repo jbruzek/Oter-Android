@@ -6,9 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.joebruzek.oter.database.OterDataLayer;
 import com.joebruzek.oter.utilities.AlarmScheduler;
 import com.joebruzek.oter.utilities.HttpTask;
@@ -21,11 +25,12 @@ import org.json.JSONObject;
  *
  * Created by jbruzek on 11/14/15.
  */
-public class SendOterService extends Service {
+public class SendOterService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private SQLiteDatabase database;
     private OterDataLayer oterLayer;
     private OterSender sender;
+    private GoogleApiClient mGoogleApiClient;
 
     /**
      * Handle an intent request to the service
@@ -43,10 +48,7 @@ public class SendOterService extends Service {
             sender = new OterSender();
         }
 
-        Log.e("SERVICE", "Logging from service");
-
-        int[] ids = {1, 2, 3};
-        AlarmScheduler.scheduleWakeUp(this, ids);
+        buildGoogleApiClient(this);
 
         // Return START_STICKY so that the system will restart
         // the service if it gets killed for some reason
@@ -87,5 +89,40 @@ public class SendOterService extends Service {
         @Override
         public void onWaitingTaskCompleted(Integer[] oters) {
         }
+    }
+
+    /**
+     * Check the amount of time that it will take to get to the location of this oterid
+     *
+     * https://maps.googleapis.com/maps/api/directions/json?origin=0.0,0.0&destination=0.0,0.0&mode=driving&key=AIzaSyCCpWXxqSycqLzMGvkEDiGNbIaq0FNOhH8
+     *
+     * @param oterid
+     * @return
+     */
+    private int checkTime(int oterid) {
+        return 0;
+    }
+
+    protected synchronized void buildGoogleApiClient(Context c) {
+        mGoogleApiClient = new GoogleApiClient.Builder(c)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }
