@@ -36,6 +36,7 @@ import org.json.JSONObject;
 public class SendOterService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, HttpTask.HttpCaller {
 
     private OterDataLayer oterLayer;
+    private long id;
     private Oter oter;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -64,14 +65,14 @@ public class SendOterService extends Service implements GoogleApiClient.Connecti
 
         oterLayer = new OterDataLayer(this);
         oterLayer.openDB();
-        long oterId = intent.getLongExtra("id", -1);
+        id = intent.getLongExtra("id", -1);
 
-        if (oterId == -1) {
+        if (id == -1) {
             Log.e("SendOterService", "Oter id not received by service");
             this.stopSelf();
         }
 
-        oter = oterLayer.getOter(oterId);
+        oter = oterLayer.getOter(id);
         if (oter == null) {
             this.stopSelf();
         }
@@ -108,7 +109,6 @@ public class SendOterService extends Service implements GoogleApiClient.Connecti
             oterLayer.removeOter(oter);
         } else {
             AlarmScheduler.scheduleWakeUp(this, oter, minutes - oter.getTime());
-            Log.e("Wakeup",  minutes - oter.getTime() + "");
         }
         //our work here is done
         this.stopSelf();
@@ -148,12 +148,26 @@ public class SendOterService extends Service implements GoogleApiClient.Connecti
     public void onConnected(Bundle bundle) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
-        if (mLastLocation != null) {
+        if (mLastLocation != null && oter != null) {
             //location has been found
             new HttpTask(this).execute(
                     Strings.buildGoogleDirectionsQuery(
                             this, mLastLocation.getLatitude(), mLastLocation.getLongitude(),
                             oter.getLocation().getLatitude(), oter.getLocation().getLongitude()));
+        } else if (mLastLocation != null) {
+            if (id < 0) {
+                this.stopSelf();
+                return;
+            }
+            oter = oterLayer.getOter(id);
+            if (oter == null) {
+                this.stopSelf();
+            } else {
+                new HttpTask(this).execute(
+                        Strings.buildGoogleDirectionsQuery(
+                                this, mLastLocation.getLatitude(), mLastLocation.getLongitude(),
+                                oter.getLocation().getLatitude(), oter.getLocation().getLongitude()));
+            }
         } else {
             //I don't know what to do
         }

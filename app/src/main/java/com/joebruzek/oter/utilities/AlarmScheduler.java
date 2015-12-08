@@ -23,11 +23,4 @@ public class AlarmScheduler {
                 PendingIntent.getBroadcast(c, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
-    public static void scheduleWakeUp(Context c) {
-        Intent intent = new Intent(c, AlarmReceiver.class);
-        AlarmManager alarmManager = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis() + 5000,
-                PendingIntent.getBroadcast(c, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT));
-    }
-
 }

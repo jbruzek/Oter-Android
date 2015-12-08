@@ -21,7 +21,9 @@
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan" >
         </activity>
-        <service android:name=".services.SendOterService" />
+        <service
+            android:name=".services.SendOterService">
+        </service>
         <receiver android:name=".utilities.AlarmReceiver"/>
     </application>
 

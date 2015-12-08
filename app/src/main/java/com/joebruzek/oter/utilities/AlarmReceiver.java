@@ -23,7 +23,7 @@ public class AlarmReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        int id = intent.getIntExtra("id", -1);
+        long id = intent.getLongExtra("id", -1);
         SendOterService.startOterService(context, id);
     }
 }
