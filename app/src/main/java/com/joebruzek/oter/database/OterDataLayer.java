@@ -231,6 +231,32 @@ public class OterDataLayer {
     }
 
     /**
+     * get an oter from an id
+     * @param id
+     * @return
+     */
+    public Oter getOter(long id) {
+        String whereClause = DatabaseContract.OtersContract.KEY_ID + " = " + id;
+        Cursor cursor = database.query(
+                DatabaseContract.OtersContract.TABLE_NAME,
+                DatabaseContract.OtersContract.ALL_COLUMNS,
+                whereClause,
+                null, null, null, null,
+                "1");
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return null;
+        }
+        if (cursor.moveToFirst()) {
+            Oter o = buildOter(cursor);
+            cursor.close();
+            return o;
+        }
+        cursor.close();
+        return null;
+    }
+
+    /**
      * Get a cursor for the database result of querying all oters
      *
      * @param limit the limit for how many oters you want to receive

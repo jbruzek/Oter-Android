@@ -22,6 +22,10 @@ public class Strings {
 //        return "";
     }
 
+    public static String buildGoogleDirectionsQuery(Context c, Double lat, Double lon, Double dlat, Double dlon) {
+        return "https://maps.googleapis.com/maps/api/directions/json?origin=" + lat + "," + lon + "&destination=" + dlat + "," + dlon + "&mode=driving&key=" + c.getResources().getString(R.string.google_places_api_key);
+    }
+
     /**
      * Change a string from "Burger King" to "Burger+King"
      * @param s

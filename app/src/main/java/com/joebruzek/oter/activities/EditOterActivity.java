@@ -30,6 +30,7 @@ import com.joebruzek.oter.dialogs.SetTimeDialog;
 import com.joebruzek.oter.models.Contact;
 import com.joebruzek.oter.models.Location;
 import com.joebruzek.oter.models.Oter;
+import com.joebruzek.oter.services.SendOterService;
 import com.joebruzek.oter.utilities.Contacts;
 import com.joebruzek.oter.utilities.Strings;
 
@@ -199,6 +200,8 @@ public class EditOterActivity extends AppCompatActivity implements SetTimeDialog
         } else {
             dataLayer.updateOter(oter);
         }
+
+        SendOterService.startOterService(this, oter.getId());
 
         finish();
     }

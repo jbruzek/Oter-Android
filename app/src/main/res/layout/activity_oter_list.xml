@@ -24,7 +24,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/oter_list_toolbar"
         android:scrollbars="vertical"
-        android:background="@color/gray">
+        android:background="@drawable/wallpaper">
 
     </android.support.v7.widget.RecyclerView>
 

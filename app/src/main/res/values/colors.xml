@@ -3,8 +3,8 @@
     <color name="primary">#9C27B0</color>
     <color name="primaryDark">#7B1FA2</color>
     <color name="primaryLight">#BA68C8</color>
-    <color name="accent">#00E676</color>
-    <color name="accentDark">#00C853</color>
+    <color name="accent">#FFA000</color>
+    <color name="accentDark">#FF6F00</color>
 
     <!--<color name="primary">#1E88E5</color>-->
     <!--<color name="primaryDark">#1565C0</color>-->
@@ -13,5 +13,6 @@
     <!--<color name="accentDark">#FFA000</color>-->
 
     <color name="white">#FFFFFF</color>
+    <color name="semiTransparent">#88FFFFFF</color>
     <color name="gray">#DDDDDD</color>
 </resources>

@@ -2,6 +2,8 @@ package com.joebruzek.oter.utilities;
 
 import android.telephony.SmsManager;
 
+import com.joebruzek.oter.models.Oter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,5 +25,13 @@ public class SmsSender {
         for (String number : contacts) {
             sms.sendMultipartTextMessage(number, null, segmentedMessage, null, null);
         }
+    }
+
+    /**
+     * Send an oter as a text message
+     * @param o
+     */
+    public static void sendText(Oter o) {
+        sendText(o.getMessage(), o.getContacts());
     }
 }
