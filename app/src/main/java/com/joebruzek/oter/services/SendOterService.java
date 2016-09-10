@@ -105,7 +105,7 @@ public class SendOterService extends Service implements GoogleApiClient.Connecti
     public void processResults(JSONObject result) {
         int minutes = getTime(result);
         if (minutes <= oter.getTime()) {
-            SmsSender.sendText(oter);
+            SmsSender.sendText(oter, this);
             oterLayer.removeOter(oter);
         } else {
             AlarmScheduler.scheduleWakeUp(this, oter, minutes - oter.getTime());

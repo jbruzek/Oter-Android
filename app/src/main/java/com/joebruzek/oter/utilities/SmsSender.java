@@ -1,8 +1,10 @@
 package com.joebruzek.oter.utilities;
 
+import android.content.Context;
 import android.telephony.SmsManager;
 
 import com.joebruzek.oter.models.Oter;
+import com.joebruzek.oter.notifications.NotificationHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,8 @@ public class SmsSender {
      * Send an oter as a text message
      * @param o
      */
-    public static void sendText(Oter o) {
+    public static void sendText(Oter o, Context c) {
         sendText(o.getMessage(), o.getContacts());
+        new NotificationHandler(c).sendSimpleNotification("Sent Oter", "\"" + o.getMessage() + "\"");
     }
 }
